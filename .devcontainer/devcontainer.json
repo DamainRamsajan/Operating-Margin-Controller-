@@ -1,0 +1,15 @@
+{
+  "name": "OMC dev (Python 3.12)",
+  "image": "mcr.microsoft.com/devcontainers/python:1-3.12-bookworm",
+  "postCreateCommand": "pip install -e '.[dev,spike]' && python scripts/make_vectors.py && pytest -q && omc --help | head -3",
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python", "ms-python.vscode-pylance", "charliermarsh.ruff", "yzhang.markdown-all-in-one"],
+      "settings": {
+        "python.testing.pytestEnabled": true,
+        "python.testing.pytestArgs": ["tests"],
+        "editor.formatOnSave": false
+      }
+    }
+  }
+}

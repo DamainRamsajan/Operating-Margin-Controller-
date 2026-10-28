@@ -1,0 +1,22 @@
+{
+  "valid.cose": {
+    "pubkey": "test-key.pub.pem",
+    "valid": true
+  },
+  "tampered.cose": {
+    "pubkey": "test-key.pub.pem",
+    "valid": false
+  },
+  "wrong-key-signed.cose": {
+    "pubkey": "test-key.pub.pem",
+    "valid": false
+  },
+  "chain-valid.jsonl": {
+    "pubkey": "test-key.pub.pem",
+    "valid": true
+  },
+  "chain-broken.jsonl": {
+    "pubkey": "test-key.pub.pem",
+    "valid": false
+  }
+}

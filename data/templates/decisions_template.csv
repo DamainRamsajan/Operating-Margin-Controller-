@@ -1,0 +1,2 @@
+case_id,ts,workflow,provider,model,version
+a1b2c3d4e5f60718,2026-10-01T09:00:00,support_chat,acme,llm-small,1.0
