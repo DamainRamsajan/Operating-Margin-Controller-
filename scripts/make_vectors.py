@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 
 from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
 from omc.vault import chain
@@ -28,7 +29,16 @@ for i in range(3):
     chain.append(chain_path, sign_statement({**payload, "n_cases": 12000 + i}, priv, "omc-test", f"vector:{i}"))
 lines = chain_path.read_text().splitlines()
 (root / "chain-broken.jsonl").write_text("\n".join([lines[0], lines[2]]) + "\n")
+es_priv = ec.derive_private_key(int.from_bytes(bytes(range(1, 33)), "big") % (2**255), ec.SECP256R1())   # fixed, public, TEST ONLY
+(root / "test-key-es256.pub.pem").write_bytes(es_priv.public_key().public_bytes(serialization.Encoding.PEM, serialization.PublicFormat.SubjectPublicKeyInfo))
+es_good = sign_statement(payload, es_priv, "omc-test", "vector:es256")
+(root / "valid-es256.cose").write_bytes(es_good)
+es_bad = bytearray(es_good); es_bad[-70] ^= 1
+(root / "tampered-es256.cose").write_bytes(bytes(es_bad))
 (root / "EXPECTED.json").write_text(json.dumps({
+    "valid-es256.cose": {"pubkey": "test-key-es256.pub.pem", "valid": True},
+    "tampered-es256.cose": {"pubkey": "test-key-es256.pub.pem", "valid": False},
+    "ed25519-statement-with-es256-key": {"file": "valid.cose", "pubkey": "test-key-es256.pub.pem", "valid": False},
     "valid.cose": {"pubkey": "test-key.pub.pem", "valid": True},
     "tampered.cose": {"pubkey": "test-key.pub.pem", "valid": False},
     "wrong-key-signed.cose": {"pubkey": "test-key.pub.pem", "valid": False},

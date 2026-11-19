@@ -1,0 +1,19 @@
+# Example workflow (copy to .github/workflows/omc-gate.yml in the repo that owns the prompt or model config).
+name: omc-gate
+on: pull_request
+permissions:
+  pull-requests: write
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install omc   # private package: install from your own index or the repository
+      - uses: ./.github/actions/omc-gate
+        with:
+          incumbent: data/incumbent.csv
+          candidate: data/candidate.csv
+          labels: data/gold.csv
+          key: ${{ runner.temp }}/omc-key.pem

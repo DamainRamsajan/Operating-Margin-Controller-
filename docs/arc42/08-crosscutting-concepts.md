@@ -93,3 +93,31 @@ Production transcripts are treated as personal data. Scoring is local-first, ext
 ## 8.22 Interoperate before building
 
 Replay, tracing and evaluation running are commoditizing in developer tools. OMC imports their datasets and traces and returns signed verdicts, and builds only the layers they lack: certified statistics, business-metric parity, independence, evidence and compliance.
+
+## 8.23 Verdict language and uncertainty display
+
+Every analysis opens with promote, hold or reject (or a measured rate) in one plain sentence, uses counts per 1,000 cases with the denominator, shows range and tolerance together, and carries an evidence chip with text. Exact bounds sit one level down (ADR-034).
+
+## 8.24 Reviewer privacy
+
+Reviewers see only their own statistics; managers see batch-level quality; no per-person rankings exist anywhere (ADR-035, RC2).
+
+## 8.25 Accessibility
+
+WCAG 2.2 AA target, color never the only signal, full keyboard operation, text alternatives for charts, reduced-motion and dark-mode support.
+
+## 8.26 States catalogue
+
+Each screen defines empty (what to do next), loading, partial data (what is missing), error (what happened, what to try) and permission-denied states.
+
+## 8.27 Stationarity and re-qualification
+
+Every audit reports the disagreement rate in the first and second half of its window with a two-proportion test. A warning does not change the guarantee but means the stable-traffic assumption looks violated; the verdict is then labeled as such and a fresh window is required before it is relied on. A regime shift (model, rule or data change) always starts a new audit (ADR-038).
+
+## 8.28 Security baseline
+
+Identity at the edge with group-to-role mapping (ADR-041); least privilege per route; CSP with nonces and the standard header set; CSRF tokens on writes; whitelisted file serving; secrets only from the environment or a secret manager and never logged; signing keys in a KMS (ADR-042); hash-chained audit log (ADR-043); hash-pinned dependencies, SBOM, scanning, signed images (ADR-044); threat model reviewed each release (`docs/security/THREAT-MODEL-v0.md`).
+
+## 8.29 Operations baseline
+
+Liveness and readiness endpoints; structured JSON logs; OpenTelemetry traces and metrics; stated SLOs; rehearsed runbooks, backup and restore, upgrade and rollback, disaster-recovery drill (ADR-045, `docs/ops/RUNBOOK.md`).

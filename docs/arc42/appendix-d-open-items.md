@@ -16,6 +16,15 @@
 | D10 | Adopt the human access and disclosure compliance module and ADR-027 to ADR-030 | Open: recommended yes |
 | D11 | First marketplace to list on (recommend the one matching the design partner's helpdesk) | Open |
 | D12 | Engage compliance counsel for rule sets and statement templates | Open: recommended before the first compliance pilot |
+| D13 | Server-rendered console first | Approved 29 October 2026 |
+| D14 | First personas to design and test: support operations lead and finance controller | Approved 29 October 2026 |
+| D15 | First release is read-only (no actuation console) | Approved 29 October 2026 |
+| D16 | Target environment for the first pilot (cloud or the partner's Kubernetes) | Open: match the first partner |
+| D17 | Identity provider for pilots | Open: any OIDC provider via the authenticating proxy first |
+| D18 | Database and object storage | Open: PostgreSQL and S3-compatible storage recommended |
+| D19 | Penetration-test vendor and budget | Open: book 4 to 6 weeks before go-live |
+| D20 | SOC 2 Type I timing | Open: decide after two partners |
+| D21 | Go-live approval authority | Open: founder |
 
 ## D.2 Feasibility spikes
 
@@ -32,6 +41,10 @@
 | S-i | Review Workbench | Do blinded comparisons and time-boxed budgets keep label quality and expert time within targets? |
 | S-j | Human-access audit | Which events are available to compute time to a human per channel? Do intervals cover planted truth? Which rules can counsel express as data? |
 | S-k | Replay privacy leakage | What residual leakage does the gate achieve on real support transcripts, and what sample size bounds it? |
+| S-m | Parity audit on real logged metrics | Do accepted-outcome, cost and handle-time metrics from a partner give useful verdicts within the case budget? |
+| S-n | Shift detection power | How large a shift does the stationarity check catch in realistic traffic, and what window length is needed? |
+| S-o | KMS signing | Can the chosen cloud's KMS produce COSE-compatible ES256 signatures that the verifier accepts, and what is the signing latency? |
+| S-p | Restore drill | Can a fresh instance be restored from backup and verify every statement within the stated recovery time? |
 | S-l | CI gate and import adapters | Can exports from Langfuse, LangSmith, Braintrust and Kitaru be imported without loss? What verdict latency is achievable in CI? |
 
 ## D.3 Verification items

@@ -70,7 +70,7 @@
 2. BB15 computes exposure: workflows, volume, spend and days to retirement.
 3. The Qualification Set Builder assembles historical cases by case class, hard cases and recent drift; every set passes the Replay Privacy Gate (section 6.17) before any provider call.
 4. Shadow Comparator scores a live copy of traffic (and the replay set) with incumbent and candidate and computes the disagreement indicator at decision or action level.
-5. **Tier 0.** If the confidence-sequence upper bound on the disagreement rate, scaled by the loss bound, falls below the tolerance, a no-regression certificate is issued with zero labels.
+5. **Tier 0.** If the mixture confidence-sequence upper bound on the disagreement rate, scaled by the loss bound, falls below the tolerance, a no-regression certificate is issued with zero labels.
 6. **Tier 1.** Otherwise sampled material disagreements go to gold review, routed by rules that never read the outcome, and an anytime-valid sequence issues a no-regression verdict or a regression alarm, with per-slice verdicts [S29].
 7. The Equivalence Tester checks business-metric parity against the owner's margins.
 8. A canary lane runs behind the risk gate with automatic rollback until the retirement date.
@@ -144,3 +144,22 @@
 2. OMC runs the certified audit and equivalence tests (section 6.9) on the qualification set and shadow traffic.
 3. The gate returns a signed verdict (promote, hold or reject) with grade, tolerance and labels spent; the verdict is registered in the transparency service.
 4. A held or rejected verdict blocks the pipeline; a promoted verdict starts the canary lane.
+
+## 6.19 R19: developer gate
+
+1. A pull request changes a prompt or model configuration.
+2. The gate runs the certified audit (and the parity audit for logged metrics) and posts one sticky comment, updated in place.
+3. A required status check passes for promote and fails for hold or reject (exit codes 0, 10, 20).
+4. If the stationarity check warns, the comment says so and asks for a fresh window.
+
+## 6.20 R20: label sprint
+
+1. A reviewer opens a batch of about 25 blinded comparisons with a visible target (labels still needed for the verdict).
+2. Each screen is one decision; keys 1 to 4; known-answer checks and an overlap sample are mixed in.
+3. After the batch the reviewer sees their own throughput and agreement; managers see batch-level quality only.
+
+## 6.21 R21: auditor verification
+
+1. The customer shares a statement through a read-only link.
+2. The auditor verifies it offline with the public verifier and sees version history (current and superseded).
+3. The auditor can comment or request a replay; nothing outside the shared set is visible.

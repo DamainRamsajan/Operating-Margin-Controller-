@@ -1,0 +1,39 @@
+# Reference deployment: OIDC login at the edge (oauth2-proxy) in front of the OMC console.
+# STATUS: syntax-checked only. Not yet run against a real identity provider (see docs/production/READINESS-CHECKLIST.csv).
+# Replace every value in angle brackets. Generate secrets with: openssl rand -base64 32
+services:
+  omc:
+    image: omc:0.1
+    environment:
+      OMC_PROXY_SECRET: "<shared-secret-also-set-in-the-proxy>"
+      OMC_GROUP_MAP: '{"<idp-group-for-admins>":"admin","<idp-group-for-reviewers>":"reviewer","<idp-group-for-viewers>":"viewer"}'
+    volumes:
+      - omc-data:/data
+    read_only: true
+    tmpfs: ["/tmp"]
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    expose: ["8000"]
+    restart: unless-stopped
+  auth-proxy:
+    image: quay.io/oauth2-proxy/oauth2-proxy:latest   # pin a specific version and digest before use
+    command:
+      - --provider=oidc
+      - --oidc-issuer-url=<https://your-idp.example.com>
+      - --client-id=<client-id>
+      - --client-secret=<client-secret>
+      - --cookie-secret=<32-byte-random>
+      - --cookie-secure=true
+      - --email-domain=<example.com>
+      - --upstream=http://omc:8000
+      - --http-address=0.0.0.0:4180
+      - --pass-user-headers=true
+      - --set-xauthrequest=true
+      - --oidc-groups-claim=groups
+      - --pass-authorization-header=false
+    # oauth2-proxy sets X-Forwarded-User and X-Forwarded-Groups; add the shared secret header at your ingress:
+    #   X-OMC-Proxy-Secret: <same value as OMC_PROXY_SECRET>
+    ports: ["443:4180"]            # terminate TLS in front of this (ingress or load balancer)
+    depends_on: [omc]
+volumes:
+  omc-data: {}

@@ -43,3 +43,6 @@
 | Promotion gate | A CI/CD step that returns a signed promote, hold or reject verdict for a model or prompt change |
 | Replay Privacy Gate | Control that screens replay and shadow sets for residual personal data and provider terms before any external call |
 | Residual leakage | Estimated fraction of sensitive content that survives redaction |
+| Mixture confidence sequence | A confidence sequence built from a mixture likelihood ratio; tighter than a union bound and valid at all sample sizes at once |
+| Parity audit | Non-inferiority test on a bounded per-case business metric, paired by case |
+| Stationarity check | Comparison of the disagreement rate in the first and second half of an audit window |

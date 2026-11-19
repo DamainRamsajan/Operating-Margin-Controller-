@@ -26,6 +26,35 @@ Goal: prove the core claim of the entry product end to end on synthetic data, wi
 | Real-LLM pair script for the S-a spike (untested, needs API keys) | `scripts/llm_pair_spike.py` |
 | Data readiness check and id pseudonymization | `omc check-data`, `omc pseudonymize`, `docs/dev/DATA-REQUEST.md`, `data/templates/` |
 
+## UX additions
+
+| Capability | Code |
+|---|---|
+| Plain-language verdicts and PR comments | `omc/render.py`, `omc gate --markdown`, `.github/actions/omc-gate` |
+| Clickable prototype with real audit trajectories | `ui/prototype/`, `scripts/build_prototype.py` |
+| UX research, gap analysis and spec | `docs/ux/UX-RESEARCH-AND-DESIGN.md` |
+
+## M0c additions
+
+| Capability | Code |
+|---|---|
+| Mixture confidence sequence for the disagreement rate | `omc/stats/cs.py` (`bern_mix_upper`, `bern_mix_lower`) |
+| Business-metric parity audit | `omc/audit/parity.py` |
+| Stationarity warning in every verdict | `omc/audit/stationarity.py`, `omc/audit/gate.py`, `omc/render.py` |
+
+## M1 console (decisions D13 to D15)
+
+| Capability | Code |
+|---|---|
+| Read-only console: Home, Verdict, Evidence (live checks), Setup, Review queue with blinded decisions and token-protected label writes | `src/omc/console/`, `omc console` |
+| Demo workspace builder | `omc demo-workspace`, `omc/console/demo.py` |
+| Gate writes chart data and a blinded review queue | `omc/audit/gate.py` (`trajectory.json`, `review_queue.csv`) |
+| Readiness report from the CLI | `omc check-data --out` |
+
+## Production foundation (5 November 2026)
+
+See `docs/production/PILOT-READINESS-PROGRAM.md` and `docs/production/READINESS-CHECKLIST.csv`. Development-only commands in this file (`omc demo-workspace`, `omc console` without a proxy) are for engineers and are not the deployment path.
+
 ## Not built yet (next backlog, in order)
 
 1. **S-a spike on real LLM decisions or real tickets**: public-text classification is done (S-A-LITE-RESULTS.md); the LLM script or a partner export is next (DATA-REQUEST.md).

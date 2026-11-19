@@ -31,6 +31,9 @@ Verification of output correctness is an input to the risk term, not the product
 - New chatbot laws turn disclosure and timely human access into measurable obligations with deadlines inside two months, and most support teams cannot show compliance statistically [S37][V].
 - Developer tools (open source and commercial) already replay production traffic, shadow and gate model changes, so replay mechanics are commoditizing; what they do not ship is a certified, signed promotion verdict [S39][V].
 - Evaluation sets built from production transcripts are a privacy boundary: redaction is imperfect and sending replay data to a candidate provider exports customer data [S40][V].
+- Evaluation and observability vendors are being absorbed by suites (Arize by Dynatrace, Galileo by Cisco, Langfuse by ClickHouse, among others), so few independent vendors remain [S44][V].
+- Statistical guarantees calibrated on one distribution can fail after a shift; one 2026 study found static conformal guarantees violated in 14 of 16 cross-dataset transfers [S45].
+- The statistical idea behind label-efficient, anytime-valid model-update audits is spreading in the research literature, so a lead cannot rest on the method alone [S29][S45].
 - Suites and labs now ship ROI, cost and evaluation views (Appendix A), so the durable advantage is statistical rigor, safe actuation, independence and customer-verifiable evidence, not dashboards or process maps.
 
 ## 1.3 Functional requirements
@@ -64,6 +67,10 @@ Verification of output correctness is an input to the risk term, not the product
 | FR25 | Audit human-access and disclosure compliance: disclosure presence and accuracy, availability of a human-request feature, time to a human, escalation success and trapped-loop rate, with intervals and signed evidence | 1 |
 | FR26 | Import traces and datasets from developer tools and expose a CI/CD promotion gate that returns a signed verdict | 0 to 1 |
 | FR27 | Gate every replay or shadow set through a Replay Privacy Gate: local-first scoring, redaction and rephrasing, measured residual leakage, provider data-use checks | 0 to 1 |
+| FR28 | Provide a verdict-first console and pull-request comments in plain language with counts per 1,000 cases, a range, a tolerance line and an evidence chip | 0 to 1 |
+| FR29 | Provide setup and data-readiness, a retirement-calendar home, a Review Workbench, an evidence page with versions and a read-only auditor view | 1 |
+| FR30 | Audit business-metric parity (non-inferiority on bounded per-case metrics) with anytime-valid bounds and a signed statement | 1 |
+| FR31 | Report on every audit whether traffic was stable inside the window and require re-qualification when it was not | 0 to 1 |
 
 ## 1.4 Quality goals
 
@@ -90,6 +97,7 @@ Secondary goals: evidence longevity (10 years or more, post-quantum safe), inter
 | Internal and external auditors | Replay, evidence integrity, retention |
 | Assurance partners (CPA firms, certification bodies, insurers) | Evidence they can verify offline and map to AIUC-1, ISO/IEC 42001, SOC 2 and underwriting frameworks |
 | Platform and AI-vendor owners (helpdesk, CRM, agent vendors) | Stable integration contracts; fair measurement |
+| Developers and expert reviewers | A verdict they can read in seconds; a review queue that is fast and unbiased |
 | Intellica engineering and operations | Buildable and operable by a small team |
 
 ## 1.6 Assumptions

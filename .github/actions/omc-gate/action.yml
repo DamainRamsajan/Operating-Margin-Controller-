@@ -1,0 +1,25 @@
+name: OMC promotion gate
+description: Run the certified paired audit and post the verdict as a sticky pull-request comment.
+inputs:
+  incumbent: { description: incumbent predictions CSV, required: true }
+  candidate: { description: candidate predictions CSV, required: true }
+  labels: { description: gold labels CSV (optional), required: false, default: "" }
+  key: { description: path to the signing key, required: true }
+  epsilon: { description: tolerated increase in error rate, required: false, default: "0.01" }
+  alpha: { description: total error probability, required: false, default: "0.05" }
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        set +e
+        ARGS="--incumbent ${{ inputs.incumbent }} --candidate ${{ inputs.candidate }} --key ${{ inputs.key }} --epsilon ${{ inputs.epsilon }} --alpha ${{ inputs.alpha }} --out-dir out/gate"
+        if [ -n "${{ inputs.labels }}" ]; then ARGS="$ARGS --labels ${{ inputs.labels }}"; fi
+        omc gate $ARGS > /dev/null
+        CODE=$?
+        # sticky comment: edit the last OMC comment if present, otherwise create one
+        gh pr comment "${{ github.event.pull_request.number }}" --body-file out/gate/verdict.md --edit-last \
+          || gh pr comment "${{ github.event.pull_request.number }}" --body-file out/gate/verdict.md
+        exit $CODE   # 0 promote, 10 hold, 20 reject: make this a required status check to block merges
+      env:
+        GH_TOKEN: ${{ github.token }}

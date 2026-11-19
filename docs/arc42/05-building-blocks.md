@@ -85,7 +85,8 @@ Components: Estimator Runner (isolated, no egress, pinned digests), Measurement 
 | Prediction-powered causal inference and active PPI | Scarce or delayed labels, abundant judge or surrogate labels | E2 to E3 | Small gold sample, calibrated outcome model [S9] |
 | Queue-aware and switchback estimators | Congested review so units interfere | E3 under congestion | Queue model or random-duration windows [S10] |
 | Certified paired audit (disagreement-supported, anytime-valid) | Model updates with prediction-determined or action-level losses | E3 | Both models shadow-scored; pre-label routing [S29] |
-| Equivalence and non-inferiority tests | Business-metric parity of a swap | E2 to E3 | Margin set by owner; sequential design |
+| Equivalence and non-inferiority tests (parity audit, `omc/audit/parity.py`) | Business-metric parity of a swap for bounded per-case metrics | E2 to E3 | Margin set by owner; metric logged for every case; anytime-valid bounds (ADR-037) |
+| Mixture confidence sequence (`omc/stats/cs.py`) | Tighter bounds on Bernoulli rates such as the disagreement rate | Supports E3 | Bernoulli data; Ville's inequality (ADR-036) |
 | Sequential OPE with mediators | Multi-step workflows | E2 | Step-level logging [S11] |
 | Observational with partial identification | Shadow mode with a deterministic baseline | E1 | Sensitivity analysis |
 | Simulation and projection | What-if | E0 | None; labeled as projection |
@@ -204,3 +205,7 @@ Published evidence shows that no single technique dominates and that residual le
 | Sampled Reviewer | Expert review of disclosure wording, whether the request was recognized and trapped-loop indicators; prediction-powered correction for the rest [S9] |
 | Compliance Estimator | Rates with intervals by channel, jurisdiction and period |
 | Compliance Statement | Signed statement of measured results against the rule set, without legal conclusions |
+
+## 5.13 Level 2: Console and Reporting (BB13)
+
+Verdict-first, role-based, progressively disclosed (summary, analyst, auditor). Screens, in priority order: Home (retirement calendar, verdict cards, next actions), Verdict (decision card, dot grid of 1,000 cases, evidence trajectory, evidence progress, statement fields, verify command), Review queue (blinded atomic comparisons, keys 1 to 4, progress to verdict), Evidence (statement, signer, versions with supersession, verify steps, read-only share), Setup and data readiness, Alerts and approvals, Rules and definitions, module views (billing, action authority, human access), Auditor portal. All verdict language comes from one library (`omc/render.py`) shared by the console, pull-request comments and reports. Pages are server-rendered with SVG charts (ADR-033). Reviewer screens show only the reviewer's own statistics and no model confidence (ADR-035). Every screen defines empty, loading, partial-data, error and permission-denied states, meets WCAG 2.2 AA, and never relies on color alone. Full specification: `docs/ux/UX-RESEARCH-AND-DESIGN.md`; clickable prototype: `ui/prototype/index.html`. **Milestone M1 implements** Home, Verdict, Evidence (with live signature and chain checks), Setup and the Review queue as a local, read-only console (`omc console`, `omc demo-workspace`); alerts, approvals, rules editors, module views, the auditor portal, version supersession and login are not built yet (ADR-039).

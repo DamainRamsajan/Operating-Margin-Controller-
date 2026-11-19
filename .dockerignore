@@ -1,0 +1,17 @@
+.git
+.github
+**/__pycache__
+**/*.pyc
+.pytest_cache
+.ruff_cache
+out
+demo
+data/public
+data/llm_pair
+docs
+ui
+site
+launch
+tests
+*.pem
+!vectors/*.pub.pem

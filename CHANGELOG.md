@@ -1,5 +1,35 @@
 # Changelog
 
+## 2026-11-05, Production readiness program (arc42 v0.6)
+- Direction change: production-grade, pilot-ready; no local, MVP or prototype work. Program, Gate P definition, workstreams and sequence in `docs/production/`; 91-item checklist and `scripts/readiness_report.py`.
+- Code: Signer abstraction with ES256 (KMS-compatible) and Ed25519, verifier with algorithm-confusion protection, vectors for both; console hardening (CSP nonces and headers, health and readiness, shared-secret proxy authentication, roles, hash-chained audit log, structured logs, refusal to serve unauthenticated on non-local addresses); `omc audit-verify`.
+- Supply chain and operations: hash-pinned locks, CycloneDX SBOM, bandit and pip-audit in CI (0 findings, no known vulnerabilities at last run), Dockerfile, compose reference, release and weekly security workflows, Dependabot, CODEOWNERS, SECURITY.md.
+- Docs: threat model v0, vulnerability handling and CRA runbook draft, deployment guide, runbook skeleton, ADR-040 to ADR-045.
+- Tests: 73 fast, 4 slow. Container build, IdP, KMS and real-infrastructure checks are not run here and are tracked in the checklist.
+
+## 2026-11-03, Milestone M1: console
+- D13 to D15 approved; ADR-033 accepted; ADR-039 added.
+- Read-only console (`omc console`): Home, Verdict, Evidence with live signature and chain checks, Setup, Review queue with blinded decisions and CSRF-protected label writes; `omc demo-workspace`; gate now writes `trajectory.json` and `review_queue.csv`.
+- 8 console tests (pages, signature tamper detection, path safety, review flow); total 51 fast tests, 4 slow.
+
+## 2026-10-29, Round 12 (arc42 v0.5)
+- arc42 v0.5: UX merged; competitor gap matrix and two-year distance plan; consolidation and method-spread added to threats; exit paths in Appendix E.9.
+- Code: mixture confidence sequence for the disagreement rate, business-metric parity audit, stationarity warning in every verdict. 43 fast tests, 4 slow.
+- ADR-036 to ADR-038; Round 12 dossier; refreshed validation and public-data results.
+
+## 2026-10-29, Usability kit
+- `docs/ux/usability/`: study README, recruiting guide, 45-minute session script with six tasks, comprehension-test design (three phrasings, Latin square), SUS, consent template, CSV templates.
+- `ui/usability/comprehension.html` (self-running test with counterbalancing and scoring) and `scripts/usability_report.py` (SUS, Wilson intervals, paired exact tests, issues). 37 fast tests.
+
+## 2026-10-29, UX
+- UX research and design spec (`docs/ux/`), clickable prototype (`ui/prototype/`, rebuilt by `scripts/build_prototype.py`), proposed amendments for arc42 v0.5, ADR-033 to ADR-035.
+- Code: plain-language verdict rendering (`omc/render.py`), `omc gate --markdown` and `verdict.md`, composite GitHub Action for sticky PR comments, `trajectory()` for evidence charts. 33 fast tests.
+
+## 2026-10-28, Launch pack
+- `launch/`: launch plan with gates and kill rules, design-partner playbook, pilot offer, security pack draft, contracts guide, automation guide, pipeline template; `scripts/pipeline_report.py`.
+- `site/index.html`: landing page (placeholder CONTACT_EMAIL to be set).
+- Public verifier repo prepared separately (omc-verify, Apache-2.0).
+
 ## 2026-10-28, Milestone M0b
 - S-a-lite: certified audit on 13,083 real public support queries (Banking77); no false certificates, equivalent and improved candidates certified, regression rejected (`docs/dev/S-A-LITE-RESULTS.md`).
 - `omc check-data`, `omc pseudonymize`, data templates, `docs/dev/DATA-REQUEST.md`, and an untested real-LLM pair script.

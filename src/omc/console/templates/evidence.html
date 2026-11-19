@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Evidence {{ run.name }} - OMC console{% endblock %}
+{% block body %}
+<h1>Evidence</h1>
+<div class="card"><div class="muted">Statement</div><div class="big">Model promotion verdict: {{ run.word }}</div><span class="chip neutral">Grade {{ run.payload.grade }}</span>
+<h2>Check</h2>
+<p><span class="chip {{ sig.state if sig.state != 'unknown' else 'neutral' }}">{% if sig.state == 'ok' %}Signature valid{% elif sig.state == 'bad' %}Signature invalid{% else %}Not checked{% endif %}</span> {{ sig.text }}</p>
+<p><span class="chip {{ 'ok' if chain_ok else 'bad' }}">{{ 'Chain intact' if chain_ok else 'Chain problem' }}</span> {{ chain_msg }}</p>
+<h2>Check it yourself</h2>
+<pre>pip install omc-verify
+omc-verify statement verdict.cose --pubkey omc-key.pub.pem
+omc-verify chain chain.jsonl --pubkey omc-key.pub.pem</pre>
+<h2>Files</h2><ul>{% for f in files %}<li><a href="/files/{{ run.name }}/{{ f }}">{{ f }}</a></li>{% endfor %}</ul>
+<h2>Versions</h2><table><thead><tr><th>Version</th><th>Issued</th><th>State</th></tr></thead><tbody><tr><td>1</td><td>{{ run.payload.issued_at }}</td><td>Current</td></tr></tbody></table>
+<p class="muted">Read-only sharing links and version supersession are in the next release. For now, send the files above to your auditor; the verifier works offline.</p></div>
+{% endblock %}

@@ -1,6 +1,6 @@
-# OMC architecture documentation (arc42) v0.4
+# OMC architecture documentation (arc42) v0.6
 
-Version 0.4, 27 October 2026. Supersedes v0.3. Merges Round 11 research: human-access compliance deadlines, developer-tool crowding, replay privacy, channel economics.
+Version 0.6, 5 November 2026. Supersedes v0.5. Adds the production-readiness program: production deployment profile, security and operations baseline, ADR-040 to ADR-045, risks and quality scenarios for a professional pilot.
 
 | File | arc42 section |
 |---|---|
@@ -23,6 +23,21 @@ Version 0.4, 27 October 2026. Supersedes v0.3. Merges Round 11 research: human-a
 | appendix-e-business-model.md | Appendix E |
 
 Conventions: source tags `[S#]` resolve in Appendix C; `[V]` marks vendor or secondary sources to verify before external use; assumptions are `A#`; every product number carries an evidence grade E0 to E3.
+
+## What changed from v0.5
+
+- **Direction change (5 November 2026):** no local, MVP or prototype work; the product must be production-grade and pilot-ready. The plan, definition of done (Gate P), workstreams and sequence are in `docs/production/PILOT-READINESS-PROGRAM.md`, with a 91-item checklist and a progress script.
+- **Built and tested:** ES256 and Ed25519 signers behind one interface (KMS-ready), proxy-based SSO with roles, security headers with CSP nonces, health and readiness endpoints, a hash-chained audit log, structured logs, safe startup, hash-pinned dependency locks, an SBOM, a container definition, CI security jobs, a threat model, a vulnerability-handling policy, a deployment guide and a runbook skeleton.
+- **Not yet done** (see the checklist): database persistence, KMS adapters, real IdP verification, real connectors, deployment on real infrastructure, penetration test, accessibility audit, independent statistical review, counsel review.
+
+## What changed from v0.4
+
+- **UX merged** (from the proposed v0.5 amendments): verdict-first console, PR comments, review workbench, evidence page (FR28, FR29, ADR-033 to ADR-035, section 5.13, scenarios R19 to R21, Q26 to Q29).
+- **Tighter statistics** (ADR-036): the disagreement-rate bound uses a beta-binomial mixture confidence sequence. In simulation, equivalent models with rare disagreement certify with about 3 times fewer cases (median 9,250 to 3,000) and a regression twice the tolerance is flagged in 55 percent of runs instead of 31 percent, with no false certificates in either.
+- **Business-metric parity audit** (ADR-037, FR30): non-inferiority on bounded per-case metrics (accepted outcome, cost, handle time) with anytime-valid bounds.
+- **Stationarity warning** (ADR-038, FR31): every audit reports whether the disagreement rate moved inside the window; recent research shows certificates can fail after a distribution shift.
+- **Decisions D13 to D15 approved** (ADR-033, ADR-039); the first read-only console is built (milestone M1, `omc console`).
+- **Competitor gap analysis** and a two-year distance plan (Appendix A.4); consolidation of evaluation vendors added to the threat model; exit paths in Appendix E.9.
 
 ## What changed from v0.3
 

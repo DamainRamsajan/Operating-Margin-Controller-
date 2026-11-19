@@ -1,0 +1,9 @@
+# Review required from the owner for security-sensitive paths. Replace with real GitHub handles or teams.
+/src/omc/vault/            @DamainRamsajan
+/src/omc/console/security.py @DamainRamsajan
+/src/omc/console/audit.py  @DamainRamsajan
+/src/omc/audit/            @DamainRamsajan
+/src/omc/stats/            @DamainRamsajan
+/Dockerfile                @DamainRamsajan
+/deploy/                   @DamainRamsajan
+/.github/                  @DamainRamsajan

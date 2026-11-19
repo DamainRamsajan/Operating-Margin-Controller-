@@ -12,8 +12,13 @@ import json
 from datetime import UTC, datetime
 
 import cbor2
-from cryptography.hazmat.primitives import serialization
+from cryptography.exceptions import InvalidSignature
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey, Ed25519PublicKey
+from cryptography.hazmat.primitives.asymmetric.utils import encode_dss_signature
+
+from omc.vault.signer import ALG_ES256, as_signer, kid_for
 
 CONTENT_TYPE = "application/vnd.omc.statement+json"
 ALG_EDDSA = -8
@@ -45,24 +50,24 @@ def now_iso() -> str:
     return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-def load_private_key(path) -> Ed25519PrivateKey:
+def load_private_key(path):
     return serialization.load_pem_private_key(open(path, "rb").read(), password=None)
 
 
-def load_public_key(path) -> Ed25519PublicKey:
+def load_public_key(path):
     return serialization.load_pem_public_key(open(path, "rb").read())
 
 
-def key_id(pub: Ed25519PublicKey) -> bytes:
-    raw = pub.public_bytes(serialization.Encoding.Raw, serialization.PublicFormat.Raw)
-    return b"omc-ed25519:" + raw[:8].hex().encode()
+def key_id(pub) -> bytes:
+    return kid_for(pub)
 
 
-def generate_keypair(out_dir, name="omc-key"):
+def generate_keypair(out_dir, name="omc-key", alg="ed25519"):
+    """Write a PEM key pair for development or tests. Production keys live in a KMS (ADR-042)."""
     from pathlib import Path
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
-    priv = Ed25519PrivateKey.generate()
+    priv = Ed25519PrivateKey.generate() if alg == "ed25519" else ec.generate_private_key(ec.SECP256R1())
     (out / f"{name}.pem").write_bytes(priv.private_bytes(
         serialization.Encoding.PEM, serialization.PrivateFormat.PKCS8, serialization.NoEncryption()))
     (out / f"{name}.pub.pem").write_bytes(priv.public_key().public_bytes(
@@ -70,33 +75,41 @@ def generate_keypair(out_dir, name="omc-key"):
     return out / f"{name}.pem", out / f"{name}.pub.pem"
 
 
-def _protected(kid: bytes, issuer: str, subject: str) -> bytes:
-    return cbor2.dumps({1: ALG_EDDSA, 4: kid, 3: CONTENT_TYPE, 15: {1: issuer, 2: subject}})
+def _protected(alg: int, kid: bytes, issuer: str, subject: str) -> bytes:
+    return cbor2.dumps({1: alg, 4: kid, 3: CONTENT_TYPE, 15: {1: issuer, 2: subject}})
 
 
 def _sig_structure(protected: bytes, payload: bytes) -> bytes:
     return cbor2.dumps(["Signature1", protected, b"", payload])
 
 
-def sign_statement(payload: dict, priv: Ed25519PrivateKey, issuer: str, subject: str) -> bytes:
-    pub = priv.public_key()
-    protected = _protected(key_id(pub), issuer, subject)
+def sign_statement(payload: dict, signer_or_key, issuer: str, subject: str) -> bytes:
+    signer = as_signer(signer_or_key)
+    protected = _protected(signer.alg, signer.kid(), issuer, subject)
     body = canonical_json(payload)
-    sig = priv.sign(_sig_structure(protected, body))
+    sig = signer.sign(_sig_structure(protected, body))
     return cbor2.dumps(cbor2.CBORTag(COSE_SIGN1_TAG, [protected, {}, body, sig]))
 
 
-def verify_statement(cose: bytes, pub: Ed25519PublicKey) -> dict:
-    """Return the payload dict if the signature verifies; raise ValueError otherwise."""
+def verify_statement(cose: bytes, pub) -> dict:
+    """Return the payload dict if the signature verifies; raise ValueError otherwise.
+    The algorithm in the protected header must match the key type (no algorithm confusion)."""
     obj = cbor2.loads(cose)
     if not isinstance(obj, cbor2.CBORTag) or obj.tag != COSE_SIGN1_TAG:
         raise ValueError("not a COSE_Sign1 message")
     protected, _unprotected, body, sig = obj.value
-    hdr = cbor2.loads(protected)
-    if hdr.get(1) != ALG_EDDSA:
-        raise ValueError("unsupported algorithm")
+    alg = cbor2.loads(protected).get(1)
+    message = _sig_structure(protected, body)
     try:
-        pub.verify(sig, _sig_structure(protected, body))
-    except Exception as e:  # cryptography raises InvalidSignature
+        if alg == ALG_EDDSA and isinstance(pub, Ed25519PublicKey):
+            pub.verify(sig, message)
+        elif alg == ALG_ES256 and isinstance(pub, ec.EllipticCurvePublicKey) and isinstance(pub.curve, ec.SECP256R1):
+            if len(sig) != 64:
+                raise ValueError("bad ES256 signature length")
+            pub.verify(encode_dss_signature(int.from_bytes(sig[:32], "big"), int.from_bytes(sig[32:], "big")),
+                       message, ec.ECDSA(hashes.SHA256()))
+        else:
+            raise ValueError("unsupported algorithm or key type mismatch")
+    except InvalidSignature as e:
         raise ValueError("signature verification failed") from e
     return json.loads(body.decode("utf-8"))

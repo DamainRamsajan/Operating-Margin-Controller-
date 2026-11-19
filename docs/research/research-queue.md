@@ -27,3 +27,11 @@ Each round: search the frontier for the topics below, update the dossier, amend 
 | 21 | Import fidelity and CI latency for developer-tool exports | CI promotion gate | S-l |
 | 22 | State and national chatbot-law tracker as versioned rule sets | Compliance module upkeep | Counsel-owned |
 | 23 | Marketplace fee schedules and data-handling terms | Channel strategy | Confirm before pricing |
+
+| 24 | Usability tests of verdict phrasing (per 1,000 vs percentage vs p-value) | Comprehension target Q26 | Five sessions per persona on the prototype |
+| 25 | Review-queue quality methods without per-person monitoring | ADR-035 | Batch-level agreement and known-answer checks |
+| 26 | Notification design for retirement and drift alerts | Alert fatigue | Digest versus immediate alerts study |
+| 27 | Run the usability kit: pilot session, then 5 sessions each for support operations and finance, comprehension test with 12 to 30 people | Decide wording, find task failures | `docs/ux/usability/README.md` |
+| 28 | Mixture or betting sequence for the labeled mean (tier 1) | Remaining conservatism | Compare with the stitched bound on the planted worlds |
+| 29 | Windowed and shift-aware certificates | Certificates fail across distributions | Reproduce the shift study on support data |
+| 30 | Runtime guardrail partners | Competitor gap | Survey partner options |

@@ -41,3 +41,14 @@
 | Q23 | Replay set released to an external provider | Provider terms check passed; residual-leakage upper bound below the policy limit; provenance recorded; no set leaves the tenant otherwise |
 | Q24 | CI promotion gate call | Signed verdict returned within the agreed time on imported datasets; verdict registered in the transparency service |
 | Q25 | Compliance statement issued | Names rule-set versions, states measurements only, and contains no legal conclusion; verified by a schema check |
+| Q26 | Verdict comprehension test | At least 85 percent of 30 or more participants state the meaning correctly (usability kit) |
+| Q27 | Time to first verdict in the console | Within the 10-business-day target |
+| Q28 | Review batches | Throughput and agreement reported per batch; no per-person ranking is available to managers |
+| Q29 | Accessibility | Automated and manual checks pass WCAG 2.2 AA on priority screens |
+| Q30 | Planted distribution shift in a test stream | The stationarity check warns and the statement carries the warning |
+| Q31 | Equivalent models with rare disagreement | Certified with a median of 5,000 cases or fewer in the simulation suite (currently about 3,000) |
+| Q32 | Request without the proxy secret | 401; with a valid secret but no mapped group 403; denied attempts are in the audit log |
+| Q33 | Restore drill | A fresh instance restored from backup verifies every statement with the public verifier within the stated recovery time |
+| Q34 | Release artifact | Image is signed, scanned with no open critical findings, pinned by digest, and ships with an SBOM |
+| Q35 | Dynamic and fuzz testing | DAST and parser fuzzing run in CI with no unresolved high findings |
+| Q36 | Availability during a pilot | Business-hours availability and recovery targets stated in the pilot SLA are met and measured |

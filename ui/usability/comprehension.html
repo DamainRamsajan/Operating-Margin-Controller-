@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Comprehension test</title>
+<style>
+:root { --bg:#fff; --fg:#14181f; --muted:#5a6472; --line:#dfe4ea; --card:#f6f8fb; --accent:#0b5cff; }
+@media (prefers-color-scheme: dark) { :root { --bg:#0e1116; --fg:#e8ecf2; --muted:#9aa5b4; --line:#262c36; --card:#151a22; --accent:#6aa0ff; } }
+body { margin:0; font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--fg); }
+main { max-width:760px; margin:0 auto; padding:24px 20px 60px; } h1 { font-size:24px; } .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 18px; margin:0 0 16px; }
+.muted { color:var(--muted); font-size:14px; } label { display:block; margin:6px 0; } input[type=text], input[type=number] { font:inherit; padding:6px 8px; border:1px solid var(--line); border-radius:6px; background:var(--bg); color:var(--fg); }
+.btn { font:inherit; padding:10px 18px; border-radius:8px; border:1px solid var(--accent); background:var(--accent); color:#fff; cursor:pointer; } .btn.alt { background:var(--bg); color:var(--fg); border-color:var(--line); }
+button:focus-visible, input:focus-visible { outline:3px solid var(--accent); outline-offset:2px; } .result { font-size:19px; } table { border-collapse:collapse; width:100%; } td, th { border-bottom:1px solid var(--line); padding:6px; text-align:left; font-size:14px; }
+fieldset { border:0; padding:0; margin:14px 0; } legend { font-weight:600; } textarea { width:100%; height:120px; font:13px ui-monospace,monospace; }
+</style>
+</head>
+<body>
+<main>
+<h1>Reading a result</h1>
+<div id="app"></div>
+</main>
+<script>
+const SC = {
+  benign: {word:'promote', q3:7.2, dir:'at most', q2:'margin', tol:10.0, facts:'3,000 cases scored, 5 labels used, evidence grade E3',
+    text:{A:'No worse than the current model. With 95% confidence the replacement makes at most 7.2 more wrong decisions per 1,000 cases; your tolerance is 10.0.',
+          B:"With 95% confidence, the replacement's error rate is at most 0.72 percentage points higher than the current model's. Your tolerance is 1.00 percentage point.",
+          C:'Verdict: promote (tier 0). Upper 95% anytime-valid confidence bound on the risk difference (candidate minus incumbent): 0.0072; tolerance 0.0100. Evidence grade E3.'}},
+  regression: {word:'reject', q3:10.3, dir:'at least', q2:'margin', tol:10.0, facts:'13,700 cases scored, 405 labels used, evidence grade E3',
+    text:{A:'Worse than the current model. With 95% confidence the replacement makes at least 10.3 more wrong decisions per 1,000 cases; your tolerance is 10.0.',
+          B:"With 95% confidence, the replacement's error rate is at least 1.03 percentage points higher than the current model's. Your tolerance is 1.00 percentage point.",
+          C:'Verdict: reject (tier 1). Lower 95% anytime-valid confidence bound on the risk difference: 0.0103; tolerance 0.0100. Evidence grade E3.'}},
+  unclear: {word:'hold', q3:11.8, dir:'at most', q2:'notenough', tol:10.0, facts:'30,000 cases scored, 444 labels used, evidence grade E1',
+    text:{A:'Not enough evidence yet. The replacement could make up to 11.8 more wrong decisions per 1,000 cases; the evidence must show at most 10.0. More traffic needed.',
+          B:"The replacement's error rate could be up to 1.18 percentage points higher than the current model's; the evidence must show at most 1.00 percentage point. More traffic needed.",
+          C:'Verdict: hold. Upper 95% anytime-valid confidence bound on the risk difference: 0.0118; tolerance 0.0100. Evidence grade E1. More traffic needed.'}}
+};
+const SCEN = ['benign', 'regression', 'unclear'], PH = ['A', 'B', 'C'];
+const Q1 = [['switch', 'Switch to the replacement'], ['wait', 'Wait for more evidence'], ['dontswitch', 'Do not switch']];
+const Q1KEY = {promote:'switch', hold:'wait', reject:'dontswitch'};
+const Q2 = [['certain', 'The result is certain'], ['margin', 'Very likely right, with a stated margin of error'], ['guess', 'It is a rough guess'], ['notenough', 'There is not enough evidence to decide yet']];
+const Q5 = [['traffic', 'Wait for more traffic'], ['labels', 'Get more human-checked labels'], ['either', 'Either one'], ['nothing', 'Nothing will change it']];
+function hash(s) { let h = 0; for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; }
+function plan(pid) { const k = hash(pid) % 6, shift = k % 3, rev = k >= 3; let t = [0, 1, 2].map(i => ({scenario: SCEN[i], phrasing: PH[(i + shift) % 3]})); return rev ? t.reverse() : t; }
+function q3ok(val, truth) { return Math.abs(val - truth) <= Math.max(1.5, 0.2 * truth); }
+const app = document.getElementById('app'); let pid = '', trials = [], idx = 0, rows = [], t0 = 0;
+function start() {
+  app.innerHTML = '<div class="card"><p>You manage customer support, and your team is deciding whether to switch to a new AI model. You will read three results and answer a few questions about each. There are no trick questions. Please answer from what is on the screen.</p><label>Participant code <input type="text" id="pid" placeholder="P01" autocomplete="off"></label><p><button class="btn" id="go">Start</button></p></div>';
+  document.getElementById('go').onclick = () => { pid = document.getElementById('pid').value.trim(); if (!pid) { document.getElementById('pid').focus(); return; } trials = plan(pid); idx = 0; rows = []; trial(); };
+}
+function radios(name, opts) { return opts.map(([v, t]) => '<label><input type="radio" name="' + name + '" value="' + v + '"> ' + t + '</label>').join(''); }
+function trial() {
+  const t = trials[idx], s = SC[t.scenario];
+  const hold = s.word === 'hold';
+  app.innerHTML = '<p class="muted">Result ' + (idx + 1) + ' of 3</p><div class="card"><div class="result" id="resulttext"></div><p class="muted" id="facts"></p></div>' +
+    '<form id="f"><fieldset><legend>1. What does this result tell you to do?</legend>' + radios('q1', Q1) + '</fieldset>' +
+    '<fieldset><legend>2. How sure is this result?</legend>' + radios('q2', Q2) + '</fieldset>' +
+    '<fieldset><legend>3. Out of every 1,000 customer cases, about how many more wrong decisions does the evidence say the new model makes, ' + (s.dir === 'at least' ? 'at least' : 'in the worst case it still allows (at most)') + '?</legend><input type="number" step="0.1" id="q3" aria-label="number per 1,000 cases"> per 1,000</fieldset>' +
+    '<fieldset><legend>4. How confident would you be explaining this to a colleague? (1 = not at all, 5 = completely)</legend>' + radios('q4', [1, 2, 3, 4, 5].map(n => [String(n), String(n)])) + '</fieldset>' +
+    (hold ? '<fieldset><legend>5. What would settle it?</legend>' + radios('q5', Q5) + '</fieldset>' : '') +
+    '<p><button class="btn" type="submit">Next</button></p><p class="muted" id="err" role="alert"></p></form>';
+  document.getElementById('resulttext').textContent = s.text[t.phrasing]; document.getElementById('facts').textContent = s.facts;
+  t0 = Date.now();
+  document.getElementById('f').onsubmit = e => {
+    e.preventDefault(); const f = new FormData(e.target), q1 = f.get('q1'), q2 = f.get('q2'), q3 = parseFloat(document.getElementById('q3').value), q4 = f.get('q4'), q5 = f.get('q5');
+    if (!q1 || !q2 || isNaN(q3) || !q4 || (hold && !q5)) { document.getElementById('err').textContent = 'Please answer every question.'; return; }
+    rows.push([pid, idx + 1, t.scenario, t.phrasing, q1, q1 === Q1KEY[s.word] ? 1 : 0, q2, q2 === s.q2 ? 1 : 0, q3, q3ok(q3, s.q3) ? 1 : 0, q4, hold ? q5 : '', hold ? (q5 === 'traffic' ? 1 : 0) : '', Math.round((Date.now() - t0) / 1000)]);
+    idx++; idx < 3 ? trial() : done();
+  };
+}
+function done() {
+  const header = 'participant_id,trial,scenario,phrasing,q1_answer,q1_correct,q2_answer,q2_correct,q3_value,q3_correct,q4_confidence,q5_answer,q5_correct,seconds';
+  const csv = rows.map(r => r.join(',')).join('\n');
+  app.innerHTML = '<div class="card"><p>Thank you. That is the end of this part.</p><p class="muted">Moderator: copy these rows into comprehension_results.csv (the header is only needed once).</p><textarea id="out" readonly aria-label="results rows"></textarea><p><button class="btn alt" id="copy">Copy rows</button> <button class="btn alt" id="dl">Download CSV</button></p></div>';
+  document.getElementById('out').value = csv;
+  document.getElementById('copy').onclick = () => { document.getElementById('out').select(); document.execCommand('copy'); };
+  document.getElementById('dl').onclick = () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([header + '\n' + csv + '\n'], {type: 'text/csv'})); a.download = 'comprehension_' + pid + '.csv'; a.click(); };
+}
+start();
+</script>
+</body>
+</html>

@@ -40,6 +40,18 @@
 | R34 | Marketplace dependence and fee pressure; bundling by marketplace owners [S41][V] | Medium | Medium | Several marketplaces; direct sales for entry tiers; independence rules for incentives (ADR-030) |
 | R35 | Scope creep across four modules for a small team | High | High | Shared machinery; strict phase gates; compliance module limited to measurement |
 | R36 | Rapidly changing state and national chatbot laws [S37][V] | High | Medium | Rule sets as versioned data; counsel owns mappings; no hard-coded thresholds |
+| R37 | Verdict misread as certainty or legal assurance | Medium | High | Verdict-first language tested for comprehension; ranges always shown; no legal conclusions |
+| R38 | Review metrics drift into worker monitoring | Medium | High | ADR-035; batch-level quality only |
+| R39 | UI scope creep delays the audit products | High | Medium | Read-only first release; prototype tested before building |
+| R40 | Alert fatigue reduces response to retirement notices | Medium | Medium | Daily digest by default; severity grouping |
+| R41 | The method is commoditized by papers and open source [S29][S45] | High | High | Keep improving bounds; publish replication; moat in integration, independence, evidence, data and distribution |
+| R42 | Evaluation vendors consolidate into suites, shrinking the independent field and attracting suite competitors [S44][V] | High | Medium | Independence charter; partner posture; be the neutral verification layer |
+| R43 | A shift makes earlier certificates misleading [S45] | Medium | High | Stationarity warning; re-qualify per window and slice; windowed audits on the roadmap |
+| R44 | Proxy misconfiguration exposes the console or lets headers be spoofed | Medium | High | Shared secret, startup refusal, network policy, deployment checklist, penetration test |
+| R45 | Signing keys outside a KMS in a real deployment | Medium | High | KMS adapter before go-live; no key files in images; rotation drill |
+| R46 | Data loss or unrecoverable state with file storage | Medium | High | Database and object storage, tested restore, backup monitoring |
+| R47 | EU Cyber Resilience Act duties apply to customer-deployed software sooner than planned [V] | Medium | High | Counsel review; reporting runbook; SBOM and signed releases already planned |
+| R48 | Third-party review lead times delay go-live | High | Medium | Book penetration test, statistician and counsel early; run in parallel with the build |
 
 ## 11.2 Technical debt to track from day one
 

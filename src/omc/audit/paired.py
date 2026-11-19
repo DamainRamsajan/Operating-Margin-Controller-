@@ -44,6 +44,7 @@ class AuditConfig:
     min_cases: int = 1
     check_every: int = 100     # evaluate bounds at checkpoints; validity is unaffected
     min_labels: int = 30       # operational guardrail for Tier 1 (not needed for validity)
+    rho_method: str = "mixture"  # "mixture" (tighter, Bernoulli) or "union" (stitched KL bound)
 
 
 @dataclass
@@ -64,12 +65,16 @@ class AuditResult:
     reason: str = ""
 
 
-def _bounds(n, d, m, s, alpha):
+def _bounds(n, d, m, s, alpha, rho_method="mixture"):
     """Bounds on rho (from n cases, d disagreements) and on mu (from m labels with sum s of
     D' = (D + 1) / 2 in [0, 1])."""
     a = alpha / 2
-    rho_ub = cs.ub_scalar(d, n, a)
-    rho_lb = cs.lb_scalar(d, n, a)
+    if rho_method == "mixture":
+        rho_ub = cs.mix_ub_scalar(d, n, a)
+        rho_lb = cs.mix_lb_scalar(d, n, a)
+    else:
+        rho_ub = cs.ub_scalar(d, n, a)
+        rho_lb = cs.lb_scalar(d, n, a)
     if m > 0:
         mu_ub = 2 * cs.ub_scalar(s, m, a) - 1
         mu_lb = 2 * cs.lb_scalar(s, m, a) - 1
@@ -106,7 +111,7 @@ def run_audit(case_ids, incumbent, candidate, gold: dict[str, str] | None, cfg: 
                     requested.append(cid)
         if n < cfg.min_cases or (n % cfg.check_every != 0):
             continue
-        last = _bounds(n, d, m, s, cfg.alpha)
+        last = _bounds(n, d, m, s, cfg.alpha, cfg.rho_method)
         rho_ub, rho_lb, mu_ub, mu_lb, delta_ub, delta_lb = last
         if rho_ub <= cfg.epsilon:
             return AuditResult("promote", "tier0", n, d, m, i, rho_ub, rho_lb, mu_ub, mu_lb,
@@ -118,7 +123,7 @@ def run_audit(case_ids, incumbent, candidate, gold: dict[str, str] | None, cfg: 
             return AuditResult("reject", "tier1", n, d, m, i, rho_ub, rho_lb, mu_ub, mu_lb,
                                delta_ub, delta_lb, requested, "regression bound above tolerance")
     if n > 0 and (last is None or n % cfg.check_every != 0):
-        last = _bounds(n, d, m, s, cfg.alpha)
+        last = _bounds(n, d, m, s, cfg.alpha, cfg.rho_method)
     if last is None:
         return AuditResult("hold", "none", n, d, m, None, 1.0, 0.0, None, None, 1.0, 0.0,
                            requested, "no data")
@@ -128,12 +133,11 @@ def run_audit(case_ids, incumbent, candidate, gold: dict[str, str] | None, cfg: 
                        delta_ub, delta_lb, requested, why)
 
 
-def monitor_vectorized(agree_flags: np.ndarray, d_values: np.ndarray, label_mask: np.ndarray,
-                       cfg: AuditConfig, check_every: int = 50):
-    """Fast version for simulation. Inputs are per-case arrays:
-    agree_flags (1 = disagree), d_values (L_c - L_i, only used where disagree and labeled),
-    label_mask (1 = this disagreement is selected for labeling).
-    Returns (certified_index or None, rejected_index or None)."""
+def trajectory(agree_flags: np.ndarray, d_values: np.ndarray, label_mask: np.ndarray,
+               cfg: AuditConfig, check_every: int = 50) -> dict:
+    """Bounds at every checkpoint (used for simulation and for charts).
+    Inputs are per-case arrays: agree_flags (1 = disagree), d_values (L_c - L_i), label_mask
+    (1 = this disagreement is selected for labeling)."""
     n_total = len(agree_flags)
     idx = np.arange(check_every, n_total + 1, check_every)
     cum_d = np.cumsum(agree_flags)
@@ -145,14 +149,27 @@ def monitor_vectorized(agree_flags: np.ndarray, d_values: np.ndarray, label_mask
     m = cum_m[idx - 1]
     s = cum_s[idx - 1]
     a = cfg.alpha / 2
-    rho_ub = cs.upper_bound(d, n, a)
-    rho_lb = cs.lower_bound(d, n, a)
+    if cfg.rho_method == "mixture":
+        rho_ub = cs.bern_mix_upper(d, n, a)
+        rho_lb = cs.bern_mix_lower(d, n, a)
+    else:
+        rho_ub = cs.upper_bound(d, n, a)
+        rho_lb = cs.lower_bound(d, n, a)
     mu_ub = np.where(m > 0, 2 * cs.upper_bound(s, m, a) - 1, 1.0)
     mu_lb = np.where(m > 0, 2 * cs.lower_bound(s, m, a) - 1, -1.0)
     delta_ub = rho_ub * np.maximum(mu_ub, 0.0)
     delta_lb = rho_lb * np.maximum(mu_lb, 0.0)
     cert = (rho_ub <= cfg.epsilon) | ((m >= cfg.min_labels) & (delta_ub <= cfg.epsilon))
     rej = (m >= cfg.min_labels) & (delta_lb > cfg.epsilon)
+    return {"idx": idx, "n": n, "d": d, "m": m, "rho_ub": rho_ub, "rho_lb": rho_lb,
+            "delta_ub": delta_ub, "delta_lb": delta_lb, "cert": cert, "rej": rej}
+
+
+def monitor_vectorized(agree_flags: np.ndarray, d_values: np.ndarray, label_mask: np.ndarray,
+                       cfg: AuditConfig, check_every: int = 50):
+    """Fast version for simulation. Returns (certified_index or None, rejected_index or None)."""
+    tr = trajectory(agree_flags, d_values, label_mask, cfg, check_every)
+    idx, cert, rej = tr["idx"], tr["cert"], tr["rej"]
     ci = int(idx[np.argmax(cert)]) if cert.any() else None
     ri = int(idx[np.argmax(rej)]) if rej.any() else None
     return ci, ri

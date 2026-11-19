@@ -13,6 +13,9 @@
 | Independence and moat | Open schema, independence charter, no contingent fees, certified connectors | ADR-015, ADR-016 |
 | Ecosystem fit and low switching friction | Import adapters and a CI gate for developer tools; marketplace listings; partner program | ADR-022, ADR-028, ADR-030 |
 | Privacy of replay data | Replay Privacy Gate: local-first scoring, redaction and rephrasing, measured residual leakage | ADR-029 |
+| Cheap, fast certificates | Beta-binomial mixture confidence sequence for the disagreement rate; zero-label tier; parity audit for logged metrics | ADR-036, ADR-037 |
+| Honest limits under shift | Stationarity warning on every audit; re-qualification after a warning or a regime change | ADR-038 |
+| Understandable verdicts | Verdict-first language, counts per 1,000, evidence chips, tested for comprehension | ADR-034, 5.13 |
 
 ## 4.2 Two planes
 
@@ -60,6 +63,8 @@ Savings used for billing or board reporting must be E2 or better (ADR-009). Migr
 | Quantum threat to signatures | 2029 to 2035 | Algorithm agility and re-anchoring |
 | Assurance incumbents (certifiers, CPA firms, insurers) add outcome and change measurement to live-testing programs | 2027 to 2028 | Be their evidence substrate: control mappings, partner interface, open verifier |
 | Quality scandals in automated assurance reduce trust in fast, cheap attestations [S34][V] | 2026 onward | Reproducible, human-verifiable evidence; replication studies; no sale of certificates |
+| Evaluation and observability vendors are acquired by suites, leaving few independent players [S44][V] | Now to 2027 | Independence charter; neutral evidence; position as the verification layer suites and customers both accept |
+| Methods spread: anytime-valid paired audits appear in papers and open source [S29][S45] | 2027 onward | Keep improving bounds and publish replication; compete on integration, independence, evidence, data and distribution, not on the statistic alone |
 | Open-source and developer tools commoditize replay, shadow and gating [S39][V] | Now | Do not compete there; import their output; differentiate with certified verdicts, business-metric parity, independence and signed statements |
 | Marketplace and suite-controlled distribution, fee pressure [S41][V] | 2027 onward | List on several marketplaces; sell entry products directly; apply independence rules to any co-sell incentive |
 | Chatbot-law changes (new states, amended thresholds) [S37][V] | Continuous | Compliance module is parameterized by rule sets; counsel maps statutes to measurements |

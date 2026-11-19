@@ -22,6 +22,7 @@
 | Developer tools for replay and gating (Langfuse, LangSmith, Braintrust, Datadog, Kitaru, llmshift, gatelane) | Backtesting on production traces, shadow reports, upgrade pull requests and CI gates, many free or open source; none reported to sign promotion verdicts or give anytime-valid certified results [S39][V] | Do not compete on runners; import and interoperate; differentiate on certified verdicts, business parity and independence |
 | Chatbot-law compliance advisers and transcript auditors | Manual or tool-assisted audits of disclosure and escalation against state and EU rules [S37][V] | Statistical, continuous, signed evidence; partner with counsel |
 | Marketplaces and co-sell programs (Salesforce AgentExchange, ServiceNow Store, Microsoft marketplace) | Unified marketplaces, new partner programs, co-sell tied to committed cloud spend [S41][V] | Distribution channels and bundling risk at once |
+| Evaluation and observability consolidation: Arize by Dynatrace (completed 1 October 2026), Galileo by Cisco (May 2026), Langfuse by ClickHouse (January 2026), Helicone by Mintlify (March 2026) [S44][V] | Independent eval vendors are being absorbed into suites; some add runtime enforcement that scores every production run and can hold or stop actions [V] | Fewer neutral options for buyers; independence becomes scarcer and more valuable; runtime guardrails are a gap we have not built |
 | Compliance automation (Vanta, Drata) | Subscription priced by size, frameworks and modules, audits engaged separately; Vanta ARR estimated near $300M in April 2026; direct switching rare [S34][V] | Business-model analogue; OMC's advantage is daily operational use |
 
 ## A.2 Where OMC aims to lead
@@ -43,7 +44,43 @@
 15. **Compliance measurement with deadlines.** Human-access and disclosure evidence for rules that apply within weeks (ADR-027).
 16. **Interoperability.** Imports from developer tools and a CI gate make OMC a verdict layer on top of what teams already use (ADR-028).
 17. **Privacy-gated replay.** Measured leakage bounds before any provider call (ADR-029).
+18. **Cheaper certificates.** Mixture bounds make the zero-label tier reach a verdict in a fraction of the cases (ADR-036).
+19. **Honest under shift.** Every audit reports whether its stable-traffic assumption held (ADR-038).
+20. **Understandable verdicts.** Plain-language, frequency-framed, comprehension-tested (ADR-034).
 
 ## A.3 Honest limits
 
 The assurance incumbents are well-funded and moving fast (a Series A and a Big Four certification within weeks of each other in 2026 [V]). OMC's position depends on staying complementary and on the evidence being better than what they can assemble from live testing alone. The rigor gap versus competitors is inferred from public descriptions and has not been tested hands-on. The lead is on rigor, independence and evidence, not features, and the window narrows as incumbents add ROI and decision modules. The certified-audit theory covers prediction-determined losses; generative agents depend on the action-level reduction and on a material-difference classifier that must be validated (ADR-021). The core audit paper is a single-author preprint validated on classification tasks and small language models; a replication on support-workflow data is Phase 0 spike S-a.
+
+## A.4 Gap analysis against competitor classes (as far as I found; verify before external use [V])
+
+| Capability | Dev tools and eval platforms | Suites (ServiceNow, Salesforce, Microsoft) | Process intelligence (Celonis, Make) | QA and assurance vendors | OMC today |
+|---|---|---|---|---|---|
+| Replay and regression on production traces | Yes | Partly | Partly | No | Imports; does not build |
+| Signed, offline-verifiable verdict | Not found | Not found | Not found | Certificates of control, not of outcome | **Yes (v0)** |
+| Anytime-valid, certified verdict | Some report intervals or paired tests; not certified sequences | No | Unverified | No | **Yes** |
+| Label-efficient (zero-label tier, disagreement-only labels) | Not found | No | No | No | **Yes** |
+| Business-metric parity with margin | Partly | Partly | Value attribution (method unverified) | No | **Yes (v0)** |
+| Independent of the thing assessed | Mostly acquired by suites | No | No | Partly | **Yes (charter)** |
+| Billing audit of vendor-defined outcomes | No | No | No | No | **Designed; estimator next** |
+| Action authority leakage audit | No | Partly (policy tools) | No | Small monitors | **Designed** |
+| Human-access and disclosure evidence | No | Partly | No | Advisers | **Designed (module)** |
+| Runtime guardrails and enforcement | Yes (some) | Yes | Partly | No | **Gap (later phase)** |
+| Tracing and observability depth | Yes | Yes | Yes | No | **Gap by design (import)** |
+| Enterprise readiness (SOC 2, SSO, scale) | Yes | Yes | Yes | Yes | **Gap (decision after two partners)** |
+| Polished UI | Yes | Yes | Yes | Yes | **Prototype only** |
+| Distribution and brand | Strong | Very strong | Strong | Growing | **None yet** |
+
+**What to fill, ignore or partner on.** Fill: console (ADR-033), billing estimator, enterprise readiness. Ignore for now: tracing depth and general observability (import instead). Partner: suites, certifiers and CPA firms for distribution and control mappings. Later: runtime guardrails, only if customers ask.
+
+## A.5 Two-year distance plan
+
+| When | Move | Why competitors cannot follow quickly |
+|---|---|---|
+| Now to Dec 2026 | Publish the methodology and replication on public data; open verifier and format | Credibility compounds with each replication; a standard needs adopters, not code |
+| Dec 2026 to Feb 2027 | Two design partners with real data; first signed statements verified by third parties | Real-data evidence and references take months to earn |
+| Q1 2027 | Billing audit and human-access evidence (deadline-driven) | Needs independence; vendors cannot audit themselves |
+| Q1 to Q2 2027 | Control mappings with a certifier or CPA firm; partner-delivered attestations | Channel relationships and mappings take time |
+| Q2 2027 | Post-quantum and transparency-service registration | Evidence that survives the signature scheme |
+| 2027 | Marketplace listings; calibration and decision-history data asset | Compounds only after deployment |
+| 2028 | Windowed audits and shift-aware certificates; cross-tenant priors | Needs the data asset and the research lead |

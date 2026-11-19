@@ -12,3 +12,5 @@
 **2027 to 2029.** 2027: wedge, statements, compliance packs, first partner attestations, first marketplace listing. 2028: gated actuation at scale, suite marketplaces, open-spec adoption by auditors or insurers. 2029: cross-tenant priors, platform-native integrations, post-quantum re-anchoring cycle.
 
 **Watch list (re-plan triggers).** An incumbent publishes interval-bearing causal attribution; AIUC or a CPA firm extends live testing to outcomes or change safety; a developer tool ships signed promotion verdicts; OpenTelemetry GenAI conventions stabilize; a major platform adds randomized rollout; SCITT profiles for agent evidence mature or SCRAPI is published as an RFC; chatbot laws change or new states act; providers expose model attestation; outcome-pricing definitions standardize.
+
+**Pilot-readiness program (5 November 2026).** Phase 0 and Phase 1 deliverables are now gated by `docs/production/PILOT-READINESS-PROGRAM.md`: the earlier pilot kit becomes a production deployment with identity, a database, KMS signing, signed releases and rehearsed operations. A pilot starts only when every priority-0 item in the readiness checklist is done (Gate P).

@@ -45,7 +45,17 @@ omc leakage-audit --reviewed 300 --leaks 0 --limit 0.02
 
 Gate exit codes: `0` promote, `10` hold (more traffic or labels needed), `20` reject.
 
-## 5. If something fails
+## 5. Run the console (read-only, local)
+
+```bash
+pip install -e ".[dev,spike,console]"
+omc demo-workspace --out demo          # three audited changes, one waiting for labels, a retirement calendar
+omc console --workspace demo           # serves http://127.0.0.1:8000
+```
+
+In Codespaces a pop-up offers to open port 8000 in the browser (or use the Ports tab). Try: Home (what needs attention), a Verdict page, the Evidence page (live signature check), Setup, and the Review queue for `borderline-needs-labels` (keys 1 to 4; labels are saved to `labels_collected.csv`, then re-run `omc gate` with them). There is no login yet: keep it on localhost.
+
+## 6. If something fails
 - `omc: command not found`: run `pip install -e ".[dev,spike]"` again.
 - Tests fail after a Python upgrade: the dev container pins Python 3.12; rebuild the container (Command Palette, Codespaces: Rebuild Container).
 - Never commit private keys. `.gitignore` excludes `*.pem` except the public test vectors.

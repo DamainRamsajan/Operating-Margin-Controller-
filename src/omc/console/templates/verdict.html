@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Verdict {{ run.name }} - OMC console{% endblock %}
+{% block body %}
+<h1>Is the replacement safe to promote?</h1>
+<div class="card">
+<span class="chip {{ run.chip }}">{{ run.word }}</span> <span class="chip neutral">Evidence grade {{ run.payload.grade }}</span>
+<div class="big">{{ run.head }}</div><p>{{ run.rest }}</p>
+{% set st = run.payload.get('stationarity') %}
+{% if st and st.warning %}<div class="banner"><b>Warning:</b> the disagreement rate moved from {{ st.first_half_rate }} to {{ st.second_half_rate }} between the first and second half of the window. The guarantee assumes steady traffic. Re-run on a stable window before relying on this result.</div>{% endif %}
+{{ dots|safe }}
+<p class="muted">Each dot is one of 1,000 cases. Red: how many could get worse ({{ '%.1f' % run.val }}). Green outline: your tolerance ({{ '%.1f' % run.tol }}).</p>
+<div class="muted">Evidence so far, relative to what is needed</div>
+<div class="bar" role="progressbar" aria-valuenow="{{ run.progress }}" aria-valuemin="0" aria-valuemax="100"><i style="width:{{ run.progress }}%"></i></div>
+<p class="muted">{{ '{:,}'.format(run.payload.n_cases) }} cases scored &middot; {{ run.payload.n_disagree }} disagreed &middot; {{ run.payload.n_labeled }} labels used</p>
+{% if run.word == 'HOLD' %}<a class="btn primary" href="/review/{{ run.name }}">Add labels</a>{% endif %}
+</div>
+<details open class="card"><summary>How the evidence built up</summary>{{ chart|safe }}
+<p class="muted">Lines show the 95% bounds on how many more wrong decisions per 1,000 cases the replacement could make. They stay valid even if you check every day. The dashed line is your tolerance.</p></details>
+<details class="card"><summary>Statement fields</summary><table>{% for k, v in fields %}<tr><th>{{ k }}</th><td>{{ v }}</td></tr>{% endfor %}</table>
+<p class="muted">Verify offline with <code>omc-verify statement verdict.cose --pubkey omc-key.pub.pem</code>. <a href="/evidence/{{ run.name }}">Open the evidence page</a>.</p></details>
+{% endblock %}

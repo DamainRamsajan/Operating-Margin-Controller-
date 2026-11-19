@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Home - OMC console{% endblock %}
+{% block body %}
+<h1>What needs attention</h1>
+{% if not runs %}
+<div class="card"><p class="big">No audits yet</p><p>Run a promotion audit and point it at this workspace:</p>
+<pre>omc gate --incumbent incumbent.csv --candidate candidate.csv --labels gold.csv --key keys/omc-key.pem --out-dir WORKSPACE/gates/my-change</pre>
+<p class="muted">Or build a demo workspace with <code>omc demo-workspace --out demo</code>. New here? Open <a href="/setup">Setup</a>.</p></div>
+{% endif %}
+{% if attention %}
+<div class="row">{% for r in attention %}
+<div class="card"><span class="chip {{ r.chip }}">{{ r.word }}</span> <span class="chip neutral">Grade {{ r.payload.grade }}</span>
+<div class="big">{{ r.head }}</div><p>{{ r.rest }}</p><p class="muted">{{ r.name }}: {{ r.payload.subject.incumbent }} to {{ r.payload.subject.candidate }}</p>
+<a class="btn primary" href="/verdict/{{ r.name }}">Open verdict</a>
+{% if r.word == 'HOLD' %} <a class="btn" href="/review/{{ r.name }}">Review labels</a>{% endif %}</div>{% endfor %}</div>
+{% elif runs %}<div class="card"><span class="chip ok">All clear</span> Every audit in this workspace passed.</div>{% endif %}
+
+{% if exposure %}
+<h2>Model exposure and retirement calendar</h2>
+<div class="card"><table><thead><tr><th>Model</th><th>Share of decisions</th><th>Retires</th><th>Days left</th><th>Status</th></tr></thead><tbody>
+{% for e in exposure %}<tr><td>{{ e.provider }}/{{ e.model }}@{{ e.version }}</td><td>{{ '%.0f' % (e.share * 100) }}%</td><td>{{ e.retirement_date or 'unknown' }}</td><td>{{ e.days_remaining if e.days_remaining is not none else '' }}</td>
+<td><span class="chip {% if e.status in ('critical','retired') %}bad{% elif e.status == 'warning' %}warn{% elif e.status == 'ok' %}ok{% else %}neutral{% endif %}">{{ e.status|capitalize }}</span></td></tr>{% endfor %}
+</tbody></table></div>
+{% endif %}
+
+{% if runs %}<h2>All audits</h2>
+<div class="card"><table><thead><tr><th>Run</th><th>Change</th><th>Verdict</th><th>Grade</th><th>Cases</th></tr></thead><tbody>
+{% for r in runs %}<tr><td><a href="/verdict/{{ r.name }}">{{ r.name }}</a></td><td>{{ r.payload.subject.incumbent }} to {{ r.payload.subject.candidate }}</td><td><span class="chip {{ r.chip }}">{{ r.word }}</span></td><td>{{ r.payload.grade }}</td><td>{{ '{:,}'.format(r.payload.n_cases) }}</td></tr>{% endfor %}
+</tbody></table></div>{% endif %}
+{% endblock %}

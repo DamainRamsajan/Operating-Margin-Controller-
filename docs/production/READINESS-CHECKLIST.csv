@@ -1,0 +1,92 @@
+id,workstream,priority,item,status,owner,evidence,notes
+WS1.1,WS1,P0,Authenticating-proxy integration with a shared secret (customer IdP at the edge),done,me,tests/test_console_security.py,
+WS1.2,WS1,P0,Role-based access (viewer reviewer admin) mapped from IdP groups,done,me,tests/test_console_security.py,
+WS1.3,WS1,P0,Refuse to serve unauthenticated on a non-local address,done,me,check_bind_safety test,
+WS1.4,WS1,P0,Verified end to end against a real IdP (Entra ID Okta Google or the partner's),not_started,founder+me,,Needs the pilot customer's or a test IdP
+WS1.5,WS1,P1,Native OIDC login (PKCE and session management) without a proxy,not_started,me,,
+WS1.6,WS1,P1,SAML via an identity broker (documented pattern),not_started,me,,
+WS1.7,WS1,P1,Service accounts and scoped tokens for the CI gate with rotation,not_started,me,,
+WS1.8,WS1,P1,Session timeout and re-authentication for sensitive actions,not_started,me,,
+WS1.9,WS1,P2,SCIM user provisioning,not_started,me,,
+WS2.1,WS2,P0,PostgreSQL persistence with versioned migrations (replace the file workspace),not_started,me,,ADR-040
+WS2.2,WS2,P0,Object storage (S3-compatible) for statements and artifacts,not_started,me,,ADR-040
+WS2.3,WS2,P0,Encryption at rest documented and verified,not_started,me+founder,,
+WS2.4,WS2,P0,Backup and a tested restore with stated RPO and RTO,not_started,me+founder,,
+WS2.5,WS2,P0,Retention and deletion jobs; customer data export,not_started,me,,
+WS2.6,WS2,P0,Id pseudonymization enforced in the ingestion pipeline,partial,me,omc pseudonymize,Tool exists; not enforced by default
+WS2.7,WS2,P1,Concurrency control and idempotent writes for labels,partial,me,CSV append only,
+WS2.8,WS2,P1,Tenant model and isolation tests,not_started,me,,Pilots use one deployment per customer
+WS3.1,WS3,P0,Signer abstraction with Ed25519 and ES256,done,me,tests/test_signer.py,ADR-042
+WS3.2,WS3,P0,Verifier supports both with an algorithm-confusion test,done,me,tests/test_signer.py,
+WS3.3,WS3,P0,KMS signer adapter for the pilot's cloud,not_started,me,,Needs a cloud account to test
+WS3.4,WS3,P0,Key rotation and revocation procedure,not_started,me+founder,,
+WS3.5,WS3,P0,Public verifier published to PyPI with vectors,partial,founder,omc-verify-public.zip,Repo prepared; not published
+WS3.6,WS3,P1,Transparency-service registration (SCITT),not_started,me,,Spike S-d
+WS3.7,WS3,P1,Trusted timestamping (RFC 3161),not_started,me,,
+WS3.8,WS3,P2,Hybrid post-quantum signatures,not_started,me,,Algorithm agility is in place
+WS4.1,WS4,P0,Security headers and CSP with nonces,done,me,tests/test_console_security.py,
+WS4.2,WS4,P0,CSRF protection on state-changing forms,done,me,tests/test_console.py,Per-process token
+WS4.3,WS4,P0,Path traversal protection and download whitelist,done,me,tests/test_console.py,
+WS4.4,WS4,P0,Static analysis in CI,done,me,.github/workflows/ci.yml,0 findings at medium or higher
+WS4.5,WS4,P0,Limits on ingested CSV size rows and encoding,not_started,me,,
+WS4.6,WS4,P0,Rate limiting and request-size limits,not_started,me,,At the app and the ingress
+WS4.7,WS4,P0,Dynamic scan (OWASP ZAP) on a running instance,not_started,me,,
+WS4.8,WS4,P1,Fuzzing of COSE CSV and JSON parsers,not_started,me,,
+WS4.9,WS4,P1,Error pages without internal detail,partial,me,,
+WS4.10,WS4,P1,Secret scanning and no secrets in logs,partial,me,log test,Enable scanning in GitHub
+WS5.1,WS5,P0,Hash-pinned lock files,done,me,requirements/*.txt,
+WS5.2,WS5,P0,Dependency vulnerability audit in CI,done,me,.github/workflows/ci.yml,No known vulnerabilities at last run
+WS5.3,WS5,P0,SBOM (CycloneDX) per release,partial,me,CI artifact,Not yet attached to a release
+WS5.4,WS5,P0,Signed container images and provenance,not_started,me+founder,.github/workflows/release.yml,Drafted; not run
+WS5.5,WS5,P0,Container image vulnerability scan,not_started,me,,
+WS5.6,WS5,P0,Vulnerability disclosure policy and EU CRA reporting runbook,partial,me+counsel,docs/security/VULNERABILITY-HANDLING.md,Counsel to confirm scope
+WS5.7,WS5,P1,Dependabot enabled,partial,founder,.github/dependabot.yml,Enable in repository settings
+WS5.8,WS5,P1,GitHub secret scanning and push protection,not_started,founder,,
+WS6.1,WS6,P0,Container builds and runs as non-root,partial,me,Dockerfile,Written; not build-tested in this sandbox
+WS6.2,WS6,P0,Reference deployment verified on a real VM or cluster,not_started,founder+me,,Needs infrastructure
+WS6.3,WS6,P0,Health and readiness endpoints,done,me,tests/test_console_security.py,
+WS6.4,WS6,P0,Structured JSON logs without sensitive data,done,me,tests/test_console_security.py,
+WS6.5,WS6,P0,Helm chart or Terraform module for the pilot cloud,not_started,me,,
+WS6.6,WS6,P0,Network policies resource limits read-only root filesystem,partial,me,deploy/docker-compose.example.yml,Compose flags only
+WS6.7,WS6,P0,Upgrade and rollback procedure with database migrations,not_started,me,,
+WS6.8,WS6,P0,Runbooks (start stop rotate secrets restore incident),partial,me,docs/ops/RUNBOOK.md,Skeleton
+WS6.9,WS6,P1,OpenTelemetry traces and metrics,not_started,me,,
+WS6.10,WS6,P1,SLOs alerting and a status page,not_started,me+founder,,
+WS6.11,WS6,P1,Disaster-recovery drill,not_started,founder+me,,
+WS7.1,WS7,P0,Certified paired audit parity audit and signed statements,done,me,tests/,Validated on synthetic and public data only
+WS7.2,WS7,P0,Read-only console: verdict evidence setup review,done,me,tests/test_console.py,File-based workspace
+WS7.3,WS7,P0,A real connector for the first partner's helpdesk,not_started,me+partner,,Spike S-e
+WS7.4,WS7,P0,Asynchronous job runner for long audits and large files,not_started,me,,
+WS7.5,WS7,P0,Billing audit estimator,not_started,me,,Spike S-c
+WS7.6,WS7,P0,Human-access compliance checks,not_started,me+counsel,,Spike S-j
+WS7.7,WS7,P1,Evidence versioning and read-only share links,not_started,me,,
+WS7.8,WS7,P1,Auditor portal,not_started,me,,
+WS7.9,WS7,P1,Alerts and notifications,not_started,me,,
+WS7.10,WS7,P1,Rules and definitions editors,not_started,me,,
+WS8.1,WS8,P0,Unit and integration tests in CI,done,me,69 fast and 4 slow tests,
+WS8.2,WS8,P0,Browser end-to-end tests (Playwright),not_started,me,,
+WS8.3,WS8,P0,Load and performance tests with budgets,not_started,me,,
+WS8.4,WS8,P0,Accessibility audit (WCAG 2.2 AA automated and manual),not_started,me+third_party,,
+WS8.5,WS8,P0,Independent statistical review of the methods,not_started,third_party,,Before any customer-facing claim
+WS8.6,WS8,P0,Usability study (5 support ops and 5 finance),not_started,founder,docs/ux/usability/,Kit ready
+WS8.7,WS8,P1,Independent review of security-sensitive code,not_started,third_party,,
+WS9.1,WS9,P0,Threat model,partial,me,docs/security/THREAT-MODEL-v0.md,v0 drafted; needs review
+WS9.2,WS9,P0,Third-party penetration test with no open high findings,not_started,third_party,,Book 4 to 6 weeks ahead
+WS9.3,WS9,P0,Security questionnaire answers (CAIQ-Lite),not_started,me+founder,,
+WS9.4,WS9,P0,Customer security pack with honest status,partial,me,launch/SECURITY-PACK.md,
+WS9.5,WS9,P1,SOC 2 Type I decision and start,not_started,founder,,
+WS9.6,WS9,P1,Cyber and professional-liability insurance,not_started,founder,,
+WS9.7,WS9,P1,Vulnerability disclosure platform or bounty,not_started,founder,,
+WS10.1,WS10,P0,Design Partner and Pilot Agreement and DPA templates,partial,founder,launch/CONTRACTS.md,
+WS10.2,WS10,P0,Counsel review: CRA scope AI Act role liability data terms,not_started,third_party,,
+WS10.3,WS10,P0,Subprocessor list and data-flow diagram,not_started,me,,Pilot plan: no subprocessors
+WS10.4,WS10,P0,Pilot SLA and support terms,not_started,founder,,
+WS10.5,WS10,P1,Privacy impact assessment template,not_started,me,,
+WS11.1,WS11,P0,Onboarding playbook and customer environment checklist,partial,me,docs/dev/DATA-REQUEST.md,
+WS11.2,WS11,P0,Support process and incident communication plan,not_started,founder+me,,
+WS11.3,WS11,P0,Pilot success criteria and feedback loop,partial,me,launch/PILOT-OFFER.md,
+WS11.4,WS11,P1,Customer-facing release notes and status,not_started,founder,,
+WS12.1,WS12,P0,Architecture documentation (arc42),done,me,docs/arc42/,
+WS12.2,WS12,P0,Administrator and deployment guide,partial,me,docs/production/DEPLOYMENT.md,Draft
+WS12.3,WS12,P0,API reference,not_started,me,,
+WS12.4,WS12,P1,Data dictionary and retention table,not_started,me,,

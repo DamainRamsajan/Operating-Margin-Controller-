@@ -1,4 +1,17 @@
 {
+  "valid-es256.cose": {
+    "pubkey": "test-key-es256.pub.pem",
+    "valid": true
+  },
+  "tampered-es256.cose": {
+    "pubkey": "test-key-es256.pub.pem",
+    "valid": false
+  },
+  "ed25519-statement-with-es256-key": {
+    "file": "valid.cose",
+    "pubkey": "test-key-es256.pub.pem",
+    "valid": false
+  },
   "valid.cose": {
     "pubkey": "test-key.pub.pem",
     "valid": true

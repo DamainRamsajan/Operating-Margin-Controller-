@@ -7,10 +7,11 @@ Status: design phase (no code yet). Working codename: OMC.
 
 **Entry products:** certified model migration qualification (with a CI promotion gate), outcome billing audit with vendor bake-off, and action authority audit, plus a human-access and disclosure compliance module. First workflow family: customer-support ticket resolution.
 
-## Quickstart (Codespaces or local)
+## Quickstart (development only; the deployment path is `docs/production/DEPLOYMENT.md`)
 
 ```bash
-pip install -e ".[dev,spike]" && python scripts/make_vectors.py && pytest -q && python scripts/demo.py
+pip install -e ".[dev,spike,console]" && python scripts/make_vectors.py && pytest -q && python scripts/demo.py
+omc demo-workspace --out demo && omc console --workspace demo     # the read-only console on http://127.0.0.1:8000
 ```
 
 See `docs/dev/CODESPACES.md` for the upload steps, `docs/dev/DATA-REQUEST.md` for the data we need next, `docs/dev/MILESTONE-M0.md` for what is built, and `docs/dev/LIMITATIONS.md` before relying on any result.
@@ -24,6 +25,9 @@ See `docs/dev/CODESPACES.md` for the upload steps, `docs/dev/DATA-REQUEST.md` fo
 | `docs/research/` | Research dossiers by round and the research queue |
 | `docs/dev/`, `docs/spec/` | Developer guides, validation results, the Evidence Statement spec |
 | `src/omc/`, `src/omc_verify/` | Engine (statistics, audit, vault, privacy) and the standalone verifier |
+| `docs/production/`, `docs/security/`, `docs/ops/` | Pilot-readiness program and checklist, threat model, vulnerability handling, deployment guide, runbook |
+| `docs/ux/`, `ui/prototype/`, `ui/usability/` | UX spec, clickable prototype (open `ui/prototype/index.html`), usability study kit and self-running comprehension test |
+| `launch/`, `site/` | Launch plan, design-partner playbook, pilot offer, security pack, contracts guide, landing page |
 | `tests/`, `vectors/`, `scripts/` | Tests, public verifier test vectors, demo and vector generator |
 | `CHANGELOG.md` | What changed and when |
 

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Review {{ run.name }} - OMC console{% endblock %}
+{% block body %}
+<h1>Review queue</h1>
+{% if done and done % batch == 0 %}<div class="banner">You finished a batch of {{ batch }}. Take a short break before the next one.</div>{% endif %}
+{% if not case %}
+<div class="card"><span class="chip {{ 'ok' if done else 'neutral' }}">{{ 'Queue finished' if done else 'Nothing to review' }}</span>
+<p>{% if done %}{{ done }} labels collected in <code>labels_collected.csv</code>. Re-run the audit with them:</p>
+<pre>omc gate --incumbent incumbent.csv --candidate candidate.csv --labels WORKSPACE/gates/{{ run.name }}/labels_collected.csv --key keys/omc-key.pem --out-dir WORKSPACE/gates/{{ run.name }}</pre>
+{% else %}This run did not ask for labels.{% endif %}</p></div>
+{% else %}
+<div class="card"><div class="muted">Case {{ batch_pos }} of {{ batch }} in this batch &middot; {{ pending }} waiting &middot; {{ done }} labeled &middot; model names are hidden</div>
+<div class="bar" aria-hidden="true" style="margin:8px 0 14px"><i style="width:{{ (100 * batch_pos / batch)|int }}%"></i></div>
+<p class="muted">Case reference <code>{{ case.case_id }}</code> (pseudonymous). Decision order is shuffled for every case. Confidence scores are never shown.</p>
+<div class="row"><div class="card"><div class="muted">Decision A</div><div class="big">{{ case.option_1 }}</div></div><div class="card"><div class="muted">Decision B</div><div class="big">{{ case.option_2 }}</div></div></div>
+<form method="post" action="/review/{{ run.name }}/label" id="f">
+<input type="hidden" name="case_id" value="{{ case.case_id }}"><input type="hidden" name="tok" value="{{ token }}">
+<p><b>Which decision is correct?</b></p>
+<div class="row" role="group" aria-label="Choose the correct decision">
+<button class="btn" name="choice" value="1" type="submit"><kbd>1</kbd>A is correct</button>
+<button class="btn" name="choice" value="2" type="submit"><kbd>2</kbd>B is correct</button>
+<button class="btn" name="choice" value="3" type="submit"><kbd>3</kbd>Neither: the correct label is</button>
+<input type="text" name="custom" id="custom" list="known" aria-label="correct label if neither" placeholder="type or pick a label" autocomplete="off">
+<datalist id="known">{% for k in known %}<option value="{{ k }}">{% endfor %}</datalist>
+<button class="btn" name="choice" value="4" type="submit"><kbd>4</kbd>Cannot tell (skip)</button></div></form>
+<p class="muted">Keys 1 to 4 also work. Reviewers see only their own progress; managers never see per-person rankings.</p></div>
+<script nonce="{{ csp_nonce }}">
+document.addEventListener('keydown', function (e) {
+  if (e.target.tagName === 'INPUT') return;
+  if ('124'.indexOf(e.key) >= 0) { var b = document.querySelector('button[value="' + e.key + '"]'); if (b) b.click(); }
+  if (e.key === '3') { document.getElementById('custom').focus(); }
+});
+</script>
+{% endif %}
+{% endblock %}

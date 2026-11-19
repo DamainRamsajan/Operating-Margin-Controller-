@@ -1,0 +1,32 @@
+# Reference release pipeline: build the image, generate an SBOM, push to GHCR, sign and attest (keyless).
+# STATUS: not yet run. Needs repository packages enabled and a version tag (git tag v0.1.0 && git push origin v0.1.0).
+name: release
+on:
+  push:
+    tags: ["v*"]
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+  attestations: write
+jobs:
+  image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v3
+        with: { registry: ghcr.io, username: "${{ github.actor }}", password: "${{ secrets.GITHUB_TOKEN }}" }
+      - id: build
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+          provenance: mode=max
+          sbom: true
+      - uses: sigstore/cosign-installer@v3
+      - run: cosign sign --yes ghcr.io/${{ github.repository }}@${{ steps.build.outputs.digest }}
+      - uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ghcr.io/${{ github.repository }}
+          subject-digest: ${{ steps.build.outputs.digest }}
+          push-to-registry: true

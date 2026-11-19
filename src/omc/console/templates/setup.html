@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Setup - OMC console{% endblock %}
+{% block body %}
+<h1>Setup and data readiness</h1>
+<div class="card"><ol>
+<li><b>Export</b> decisions for two model versions on the same cases (case_id, ts, prediction) and a sample of human labels (case_id, gold). No message text, names or emails.</li>
+<li><b>Pseudonymize</b> ids with a secret only you hold: <code>omc pseudonymize --in incumbent.csv --out incumbent_p.csv --secret-file secret.txt</code></li>
+<li><b>Check</b> the files: <code>omc check-data --incumbent incumbent_p.csv --candidate candidate_p.csv --labels gold_p.csv</code></li>
+<li><b>Audit</b>: <code>omc gate ... --out-dir WORKSPACE/gates/my-change</code>, then reload this page.</li>
+<li><b>Label</b> disagreements in the Review queue if the audit asks for labels.</li></ol></div>
+{% if ready %}
+<h2>Latest readiness check</h2>
+<div class="card"><table>
+<tr><th>Cases in both files</th><td>{{ '{:,}'.format(ready.get('cases_in_both', 0)) }}</td></tr>
+<tr><th>Disagreement rate</th><td>{{ ready.get('disagreement_rate', '') }}</td></tr>
+{% if 'gold_coverage_all' in ready %}<tr><th>Labels cover all cases</th><td>{{ '%.1f' % (ready.gold_coverage_all * 100) }}%</td></tr>
+<tr><th>Labels cover disagreements</th><td>{{ '%.1f' % (ready.gold_coverage_on_disagreements * 100) }}%</td></tr>{% endif %}
+</table>
+{% if ready.issues %}<p><span class="chip warn">Issues</span></p><ul>{% for i in ready.issues %}<li>{{ i }}</li>{% endfor %}</ul>{% else %}<p><span class="chip ok">No problems found</span></p>{% endif %}</div>
+{% else %}<div class="card"><span class="chip neutral">No readiness report yet</span> Run <code>omc check-data</code> and save the output to <code>WORKSPACE/readiness.json</code>.</div>{% endif %}
+{% endblock %}

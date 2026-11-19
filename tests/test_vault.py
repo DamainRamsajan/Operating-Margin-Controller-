@@ -47,6 +47,7 @@ def test_chain_detects_removal_and_edit(tmp_path):
 def test_published_vectors_match_expectations():
     exp = json.loads((ROOT / "vectors" / "EXPECTED.json").read_text())
     for name, e in exp.items():
-        kind = "chain" if name.endswith(".jsonl") else "statement"
-        code = verify_main([kind, str(ROOT / "vectors" / name), "--pubkey", str(ROOT / "vectors" / e["pubkey"])])
+        fname = e.get("file", name)
+        kind = "chain" if fname.endswith(".jsonl") else "statement"
+        code = verify_main([kind, str(ROOT / "vectors" / fname), "--pubkey", str(ROOT / "vectors" / e["pubkey"])])
         assert (code == 0) == e["valid"], name

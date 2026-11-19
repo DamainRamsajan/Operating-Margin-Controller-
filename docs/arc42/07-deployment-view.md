@@ -34,3 +34,7 @@ HOSTED CONTROL PLANE (multi-region)
 - **Pilot kit:** single-node bundle for Phase 0, installable in a customer tenant in a day, read-only, with the Migration Gate and a deprecation-feed poller.
 - **Production:** replicated policy service; separate estimator runners.
 - **Air-gapped:** control-plane functions replaced by signed offline update bundles; registry mirrored; self-hosted transparency service.
+
+## 7.3 Production profile for pilots
+
+Per customer: an edge with TLS and the customer's OIDC login (authenticating proxy or ingress), the console container in proxy-authentication mode behind it, a worker tier, PostgreSQL and S3-compatible object storage in the customer's tenant, a KMS-held signing key, a log platform receiving the console's JSON logs and the exported audit log. Images are built in CI, scanned, signed and pinned by digest; an SBOM is attached to every release. Today the console, proxy mode, Dockerfile and compose reference exist; the database, KMS adapters, workers and Helm or Terraform do not (ADR-040, checklist WS2 and WS6). Details: `docs/production/DEPLOYMENT.md`.

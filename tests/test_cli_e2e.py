@@ -55,3 +55,13 @@ def test_check_data_flags_problems(tmp_path):
     (tmp_path / "b.csv").write_text("case_id,prediction\nx,a\n")
     code, out = run("check-data", "--incumbent", tmp_path / "a.csv", "--candidate", tmp_path / "b.csv")
     assert code == 20 and any("duplicate" in i for i in json.loads(out)["issues"])
+
+
+def test_markdown_comment_is_plain_language(tmp_path):
+    run("keygen", "--out-dir", tmp_path / "k")
+    run("sample", "--out-dir", tmp_path / "d", "--n", 16000)
+    d = tmp_path / "d" / "regression"
+    code, out = run("gate", "--incumbent", d / "incumbent.csv", "--candidate", d / "candidate.csv", "--labels", d / "gold.csv",
+                    "--key", tmp_path / "k" / "omc-key.pem", "--out-dir", tmp_path / "o", "--markdown")
+    assert code == 20 and "OMC verdict: REJECT" in out and "per 1,000 cases" in out and "omc-verify statement" in out
+    assert (tmp_path / "o" / "verdict.md").read_text().strip() == out.strip()

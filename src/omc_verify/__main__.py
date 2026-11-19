@@ -15,7 +15,11 @@ import json
 import sys
 
 import cbor2
-from cryptography.hazmat.primitives import serialization
+from cryptography.exceptions import InvalidSignature
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
+from cryptography.hazmat.primitives.asymmetric.utils import encode_dss_signature
 
 GENESIS = "00" * 32
 
@@ -25,11 +29,19 @@ def _verify(cose: bytes, pub) -> dict:
     if not isinstance(obj, cbor2.CBORTag) or obj.tag != 18:
         raise ValueError("not a COSE_Sign1 message")
     protected, _u, body, sig = obj.value
-    if cbor2.loads(protected).get(1) != -8:
-        raise ValueError("unsupported algorithm")
+    alg = cbor2.loads(protected).get(1)
+    message = cbor2.dumps(["Signature1", protected, b"", body])
     try:
-        pub.verify(sig, cbor2.dumps(["Signature1", protected, b"", body]))
-    except Exception as e:
+        if alg == -8 and isinstance(pub, Ed25519PublicKey):
+            pub.verify(sig, message)
+        elif alg == -7 and isinstance(pub, ec.EllipticCurvePublicKey) and isinstance(pub.curve, ec.SECP256R1):
+            if len(sig) != 64:
+                raise ValueError("bad ES256 signature length")
+            pub.verify(encode_dss_signature(int.from_bytes(sig[:32], "big"), int.from_bytes(sig[32:], "big")),
+                       message, ec.ECDSA(hashes.SHA256()))
+        else:
+            raise ValueError("unsupported algorithm or key type mismatch")
+    except InvalidSignature as e:
         raise ValueError("signature verification failed") from e
     return json.loads(body.decode("utf-8"))
 

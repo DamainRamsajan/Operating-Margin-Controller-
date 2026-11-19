@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OMC prototype (demo data)</title>
+<style>
+:root { --bg:#fff; --fg:#14181f; --muted:#5a6472; --line:#dfe4ea; --card:#f6f8fb; --accent:#0b5cff; --ok:#0a7a3d; --warn:#9a5b00; --bad:#b3261e; --okbg:#e3f5ea; --warnbg:#fff2d9; --badbg:#fde8e6; }
+@media (prefers-color-scheme: dark) { :root { --bg:#0e1116; --fg:#e8ecf2; --muted:#9aa5b4; --line:#262c36; --card:#151a22; --accent:#6aa0ff; --ok:#6fd49a; --warn:#f0b955; --bad:#ff8f86; --okbg:#123322; --warnbg:#3a2a0b; --badbg:#3b1613; } }
+* { box-sizing: border-box; } body { margin:0; font:15px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--fg); }
+header { display:flex; gap:16px; align-items:center; flex-wrap:wrap; padding:10px 20px; border-bottom:1px solid var(--line); background:var(--card); }
+header b { font-size:16px; } header label { color:var(--muted); font-size:13px; } select { font:inherit; padding:4px 8px; border-radius:6px; border:1px solid var(--line); background:var(--bg); color:var(--fg); }
+nav[role=tablist] { display:flex; gap:4px; padding:8px 20px 0; border-bottom:1px solid var(--line); flex-wrap:wrap; }
+nav button { border:0; background:none; color:var(--muted); padding:10px 14px; font:inherit; border-bottom:3px solid transparent; cursor:pointer; }
+nav button[aria-selected=true] { color:var(--fg); border-color:var(--accent); font-weight:600; }
+button:focus-visible, select:focus-visible, a:focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
+main { max-width:1000px; margin:0 auto; padding:20px; } section[hidden] { display:none; }
+.card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 18px; margin:0 0 16px; }
+.row { display:flex; gap:12px; flex-wrap:wrap; } .row > * { flex:1 1 260px; }
+.chip { display:inline-block; padding:2px 10px; border-radius:999px; font-size:13px; font-weight:600; border:1px solid currentColor; }
+.ok { color:var(--ok); background:var(--okbg); } .warn { color:var(--warn); background:var(--warnbg); } .bad { color:var(--bad); background:var(--badbg); } .neutral { color:var(--muted); }
+.big { font-size:26px; font-weight:700; margin:4px 0 8px; } .muted { color:var(--muted); font-size:13px; }
+table { border-collapse:collapse; width:100%; } th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); font-size:14px; } th { color:var(--muted); font-weight:600; }
+.btn { font:inherit; padding:8px 14px; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--fg); cursor:pointer; }
+.btn.primary { background:var(--accent); color:#fff; border-color:var(--accent); } .btn kbd { font:12px ui-monospace,monospace; border:1px solid var(--line); border-radius:4px; padding:0 5px; margin-right:6px; background:var(--card); color:var(--fg); }
+.bar { height:10px; background:var(--line); border-radius:6px; overflow:hidden; } .bar > i { display:block; height:100%; background:var(--accent); }
+pre { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:12px; overflow:auto; font-size:13px; white-space:pre-wrap; }
+.banner { background:var(--warnbg); color:var(--warn); border:1px solid var(--warn); padding:8px 12px; border-radius:8px; margin-bottom:16px; font-size:13px; }
+svg text { fill:var(--muted); font-size:11px; }
+</style>
+</head>
+<body>
+<header>
+<b>OMC</b><span class="muted">clickable prototype</span>
+<label>Viewing as <select id="persona"><option value="ops">Support operations lead</option><option value="fin">Finance controller</option><option value="rev">Expert reviewer</option><option value="aud">Auditor</option></select></label>
+<label>Detail level <select id="level"><option value="exec">Summary</option><option value="analyst">Analyst</option><option value="auditor">Auditor</option></select></label>
+</header>
+<nav role="tablist" aria-label="Sections">
+<button role="tab" data-tab="home" aria-selected="true">Home</button><button role="tab" data-tab="verdict" aria-selected="false">Verdict</button>
+<button role="tab" data-tab="review" aria-selected="false">Review queue</button><button role="tab" data-tab="compliance" aria-selected="false">Human access</button>
+<button role="tab" data-tab="evidence" aria-selected="false">Evidence</button><button role="tab" data-tab="ci" aria-selected="false">CI comment</button>
+</nav>
+<main>
+<div class="banner">Prototype. Verdict numbers and charts come from real runs of the audit on synthetic data. Everything else (calendar, cases, human-access rates) is invented demo data.</div>
+
+<section id="home" role="tabpanel">
+<h2>What needs attention</h2>
+<div class="card"><table><caption class="muted" style="text-align:left">Model exposure and retirement calendar (as of 27 Oct 2026, fictional models)</caption>
+<thead><tr><th>Model</th><th>Share of decisions</th><th>Retires</th><th>Days left</th><th>Status</th><th>Next step</th></tr></thead>
+<tbody>
+<tr><td>acme/llm-small@1.0</td><td>55%</td><td>15 Dec 2026</td><td>49</td><td><span class="chip bad">Critical</span></td><td><button class="btn primary" data-goto="verdict">Qualify replacement</button></td></tr>
+<tr><td>acme/llm-large@2.1</td><td>30%</td><td>20 Feb 2027</td><td>116</td><td><span class="chip warn">Warning</span></td><td>Start in 6 weeks</td></tr>
+<tr><td>zeta/chat-pro@5</td><td>15%</td><td>30 Sep 2027</td><td>337</td><td><span class="chip ok">OK</span></td><td>None</td></tr></tbody></table></div>
+<div class="row" id="homecards"></div>
+</section>
+
+<section id="verdict" role="tabpanel" hidden>
+<h2>Is the replacement model safe to promote?</h2>
+<div class="row" style="margin-bottom:12px" id="scbuttons"></div>
+<div class="card" id="vcard"></div>
+<div class="card" data-min="analyst"><h3 style="margin-top:0">How the evidence built up</h3><div id="chart"></div><p class="muted">Lines show the 95% bounds on how many more wrong decisions per 1,000 cases the replacement could make. They stay valid even if you check every day. The dashed line is your tolerance.</p></div>
+<div class="card" data-min="auditor"><h3 style="margin-top:0">Statement fields</h3><table id="fields"></table><p class="muted">Verify offline with <code id="verifycmd"></code></p></div>
+</section>
+
+<section id="review" role="tabpanel" hidden>
+<h2>Review queue</h2>
+<div class="card"><div class="muted">Case 3 of 25 in this batch &middot; about 12 labels still needed for a verdict &middot; model names are hidden</div>
+<div class="bar" aria-hidden="true" style="margin:8px 0 14px"><i style="width:12%"></i></div>
+<p><b>Customer message (redacted):</b> "I was charged twice for my order [ORDER] and the second charge still shows on my card [CARD]."</p>
+<div class="row"><div class="card"><div class="muted">Decision A</div><div class="big">refund</div></div><div class="card"><div class="muted">Decision B</div><div class="big">billing</div></div></div>
+<p>Which decision is correct?</p>
+<div class="row" role="group" aria-label="Choose the correct decision">
+<button class="btn" data-pick="A"><kbd>1</kbd>A is correct</button><button class="btn" data-pick="B"><kbd>2</kbd>B is correct</button>
+<button class="btn" data-pick="N"><kbd>3</kbd>Neither (choose label)</button><button class="btn" data-pick="U"><kbd>4</kbd>Cannot tell</button></div>
+<p class="muted" id="picked" aria-live="polite">Use keys 1 to 4. A and B are shuffled for every case. Confidence scores are never shown, so they cannot sway your answer.</p></div>
+<div class="card"><b>Why this design.</b> One atomic decision per screen, keyboard shortcuts, blinded order, small time-boxed batches, and known-answer checks hidden among the cases to keep quality up. Reviewers see only their own statistics.</div>
+</section>
+
+<section id="compliance" role="tabpanel" hidden>
+<h2>Human access and disclosure</h2>
+<div class="banner">Synthetic demo data. Thresholds come from a rule set entered and confirmed by your counsel; OMC reports measurements and makes no legal conclusion.</div>
+<div class="card"><table id="comp"></table></div>
+</section>
+
+<section id="evidence" role="tabpanel" hidden>
+<h2>Evidence</h2>
+<div class="card"><div class="row"><div><div class="muted">Statement</div><div class="big" id="evtitle"></div><span class="chip neutral" id="evgrade"></span></div>
+<div><div class="muted">Signed by</div><div>omc-dev (test key)</div><div class="muted">Registered</div><div>not yet registered in a transparency service</div></div></div>
+<h3>Check it yourself</h3><pre>pip install omc-verify
+omc-verify statement verdict.cose --pubkey omc-key.pub.pem   # exit 0 means the signature and content are intact</pre>
+<h3>Versions</h3><table><thead><tr><th>Version</th><th>Date</th><th>State</th></tr></thead><tbody><tr><td>v2</td><td>28 Oct 2026</td><td>Current (supersedes v1)</td></tr><tr><td>v1</td><td>21 Oct 2026</td><td>Superseded: kept for audit, no re-upload needed</td></tr></tbody></table>
+<p><button class="btn primary">Share with auditor (read-only link)</button> <button class="btn">Download statement</button></p></div>
+</section>
+
+<section id="ci" role="tabpanel" hidden>
+<h2>Pull-request comment</h2><p class="muted">Posted and updated in place on the pull request that changes a model or prompt. A required status check blocks the merge on reject.</p><div id="cipre"></div>
+</section>
+</main>
+<script>
+const DATA = /*DATA*/null;
+const $ = (s, r=document) => r.querySelector(s), $$ = (s, r=document) => [...r.querySelectorAll(s)];
+let current = 'regression';
+function tab(name) { $$('nav button').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === name)); $$('main section').forEach(s => s.hidden = s.id !== name); if (name==='verdict') renderVerdict(); }
+$$('nav button').forEach(b => b.onclick = () => tab(b.dataset.tab));
+document.addEventListener('click', e => { const g = e.target.closest('[data-goto]'); if (g) { current='benign'; tab(g.dataset.goto); } });
+const chipFor = w => w==='PROMOTE' ? 'ok' : w==='REJECT' ? 'bad' : 'warn';
+const label = {benign:'Benign update', regression:'Clear regression', unclear:'Borderline'};
+function renderHome() { $('#homecards').innerHTML = Object.entries(DATA.scenarios).map(([k,v]) => `<div class="card"><div class="muted">${label[k]}</div><span class="chip ${chipFor(v.word)}">${v.word}</span> <span class="chip neutral">Grade ${v.payload.grade}</span><p>${v.sentence}</p><button class="btn" data-sc="${k}">Open verdict</button></div>`).join(''); }
+document.addEventListener('click', e => { const b = e.target.closest('[data-sc]'); if (b) { current = b.dataset.sc; tab('verdict'); } });
+function dots(count, tol) { let s = '<svg role="img" aria-label="1,000 cases; ' + count + ' marked as possibly worse" viewBox="0 0 520 110" width="100%" style="max-width:520px">'; for (let i=0;i<1000;i++){ const x=6+(i%50)*10, y=6+Math.floor(i/50)*5; const hot=i<count, mark=i<tol; s += `<circle cx="${x}" cy="${y}" r="1.9" fill="${hot?'var(--bad)':'var(--line)'}" ${mark&&!hot?'stroke="var(--ok)" stroke-width="0.8"':''}/>`; } return s + '</svg>'; }
+function chart(points, tol) { const W=640,H=220,L=40,B=26,T=10,R=10; const xmax=points[points.length-1].n; const ymax=Math.max(tol*3, ...points.map(p=>Math.min(p.ub,80)), 20); const X=n=>L+(W-L-R)*n/xmax, Y=v=>H-B-(H-B-T)*Math.min(v,ymax)/ymax;
+ const line=(k,c)=>'<polyline fill="none" stroke="'+c+'" stroke-width="2" points="'+points.map(p=>X(p.n)+','+Y(p[k])).join(' ')+'"/>';
+ let s=`<svg role="img" aria-label="Upper and lower bound on extra wrong decisions per 1,000 cases versus cases scored" viewBox="0 0 ${W} ${H}" width="100%">`;
+ s+=`<line x1="${L}" y1="${H-B}" x2="${W-R}" y2="${H-B}" stroke="var(--line)"/><line x1="${L}" y1="${T}" x2="${L}" y2="${H-B}" stroke="var(--line)"/>`;
+ s+=`<line x1="${L}" x2="${W-R}" y1="${Y(tol)}" y2="${Y(tol)}" stroke="var(--ok)" stroke-dasharray="5 4"/><text x="${W-R-4}" y="${Y(tol)-5}" text-anchor="end">tolerance ${tol}</text>`;
+ s+=line('ub','var(--accent)')+line('lb','var(--bad)');
+ s+=`<text x="${L}" y="${H-6}">0</text><text x="${W-R}" y="${H-6}" text-anchor="end">${xmax.toLocaleString()} cases</text><text x="4" y="${T+8}">${ymax} per 1,000</text>`;
+ return s+`<text x="${X(xmax*0.55)}" y="${Y(points[Math.floor(points.length*0.55)].ub)-8}" fill="var(--accent)">upper bound</text></svg>`; }
+function renderVerdict() {
+ $('#scbuttons').innerHTML = Object.keys(DATA.scenarios).map(k => `<button class="btn ${k===current?'primary':''}" data-sc="${k}">${label[k]}</button>`).join('');
+ const v = DATA.scenarios[current], p = v.payload, tol = Math.round(parseFloat(p.tolerance)*1000), n = v.points.length;
+ const val = v.word==='REJECT' ? parseFloat(p.delta_lb)*1000 : parseFloat(p.delta_ub)*1000;
+ const last = v.points[Math.min(n-1, Math.max(0, Math.floor((p.stopping_index||p.n_cases)/250)-1))];
+ const prog = Math.min(100, Math.round(100*tol/Math.max(parseFloat(p.delta_ub)*1000, tol)));
+ $('#vcard').innerHTML = `<span class="chip ${chipFor(v.word)}">${v.word}</span> <span class="chip neutral">Evidence grade ${p.grade}</span><div class="big">${v.sentence.split('. ')[0]}.</div><p>${v.sentence.split('. ').slice(1).join('. ')}</p>
+ ${dots(Math.round(val), tol)}<p class="muted">Each dot is one of 1,000 cases. Red dots: how many could get worse (${val.toFixed(1)}). Green outline: your tolerance (${tol}).</p>
+ <div class="muted">Evidence so far, relative to what is needed</div><div class="bar" role="progressbar" aria-valuenow="${prog}" aria-valuemin="0" aria-valuemax="100"><i style="width:${prog}%"></i></div>
+ <p class="muted">${p.n_cases.toLocaleString()} cases scored &middot; ${p.n_disagree} disagreed &middot; ${p.n_labeled} labels used</p>`;
+ $('#chart').innerHTML = chart(v.points, tol);
+ $('#fields').innerHTML = Object.entries({verdict:p.verdict, tier:p.tier, tolerance:p.tolerance, alpha:p.alpha, n_cases:p.n_cases, n_labeled:p.n_labeled, delta_ub:p.delta_ub, delta_lb:p.delta_lb, estimator:p.estimator.name+' '+p.estimator.version, issued_at:p.issued_at}).map(([a,b])=>`<tr><th>${a}</th><td>${b}</td></tr>`).join('');
+ $('#verifycmd').textContent = 'omc-verify statement verdict.cose --pubkey omc-key.pub.pem';
+ $('#evtitle').textContent = 'Model promotion verdict: ' + v.word; $('#evgrade').textContent = 'Grade ' + p.grade;
+ $('#cipre').innerHTML = '<pre>' + v.markdown.replace(/&/g,'&amp;').replace(/</g,'&lt;') + '</pre>'; applyLevel();
+}
+function applyLevel() { const rank = {exec:0, analyst:1, auditor:2}, lv = rank[$('#level').value]; $$('[data-min]').forEach(e => e.hidden = rank[e.dataset.min] > lv); }
+$('#level').onchange = applyLevel;
+$('#persona').onchange = e => { const m = {ops:'home', fin:'verdict', rev:'review', aud:'evidence'}; if (e.target.value==='fin') $('#level').value='exec'; if (e.target.value==='aud') $('#level').value='auditor'; if (e.target.value==='ops') $('#level').value='analyst'; tab(m[e.target.value]); applyLevel(); };
+function wilson(k,n){ const z=1.96,p=k/n,d=1+z*z/n,c=(p+z*z/(2*n))/d,h=z*Math.sqrt(p*(1-p)/n+z*z/(4*n*n))/d; return [c-h,c+h]; }
+const rows=[['Chat',1842,1701],['Email (callback within 1 business day)',1210,1160],['Phone',640,611]];
+$('#comp').innerHTML='<thead><tr><th>Channel</th><th>Requests for a human</th><th>Reached in time</th><th>Rate</th><th>95% range</th></tr></thead><tbody>'+rows.map(r=>{const [lo,hi]=wilson(r[2],r[1]);return `<tr><td>${r[0]}</td><td>${r[1].toLocaleString()}</td><td>${r[2].toLocaleString()}</td><td>${(100*r[2]/r[1]).toFixed(1)}%</td><td>${(100*lo).toFixed(1)}% to ${(100*hi).toFixed(1)}%</td></tr>`}).join('')+'</tbody>';
+document.addEventListener('keydown', e => { if (!$('#review').hidden && '1234'.includes(e.key)) { const t={1:'A is correct',2:'B is correct',3:'Neither',4:'Cannot tell'}[e.key]; $('#picked').textContent = 'Recorded: ' + t + '. Next case.'; } });
+$$('[data-pick]').forEach(b => b.onclick = () => $('#picked').textContent = 'Recorded. Next case.');
+renderHome(); applyLevel();
+</script>
+</body>
+</html>

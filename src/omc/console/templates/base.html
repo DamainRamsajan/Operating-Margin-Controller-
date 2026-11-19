@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}OMC console{% endblock %}</title>
+<style nonce="{{ csp_nonce }}">
+:root { --bg:#fff; --fg:#14181f; --muted:#5a6472; --line:#dfe4ea; --card:#f6f8fb; --accent:#0b5cff; --ok:#0a7a3d; --warn:#9a5b00; --bad:#b3261e; --okbg:#e3f5ea; --warnbg:#fff2d9; --badbg:#fde8e6; }
+@media (prefers-color-scheme: dark) { :root { --bg:#0e1116; --fg:#e8ecf2; --muted:#9aa5b4; --line:#262c36; --card:#151a22; --accent:#6aa0ff; --ok:#6fd49a; --warn:#f0b955; --bad:#ff8f86; --okbg:#123322; --warnbg:#3a2a0b; --badbg:#3b1613; } }
+* { box-sizing: border-box; } body { margin:0; font:15px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--fg); }
+header { display:flex; gap:20px; align-items:center; padding:10px 20px; border-bottom:1px solid var(--line); background:var(--card); flex-wrap:wrap; }
+header a { color:var(--muted); text-decoration:none; padding:4px 0; border-bottom:3px solid transparent; } header a[aria-current=page] { color:var(--fg); border-color:var(--accent); font-weight:600; }
+main { max-width:980px; margin:0 auto; padding:20px; } h1 { font-size:24px; margin:8px 0 14px; } h2 { font-size:18px; margin:22px 0 10px; }
+.card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 18px; margin:0 0 16px; } .row { display:flex; gap:14px; flex-wrap:wrap; } .row > .card { flex:1 1 280px; }
+.chip { display:inline-block; padding:2px 10px; border-radius:999px; font-size:13px; font-weight:600; border:1px solid currentColor; } .ok { color:var(--ok); background:var(--okbg); } .warn { color:var(--warn); background:var(--warnbg); } .bad { color:var(--bad); background:var(--badbg); } .neutral { color:var(--muted); }
+.big { font-size:21px; font-weight:650; margin:6px 0 4px; } .muted { color:var(--muted); font-size:13px; } table { border-collapse:collapse; width:100%; } th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); font-size:14px; } th { color:var(--muted); font-weight:600; }
+.btn { display:inline-block; font:inherit; padding:8px 14px; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--fg); cursor:pointer; text-decoration:none; } .btn.primary { background:var(--accent); color:#fff; border-color:var(--accent); } .btn kbd { font:12px ui-monospace,monospace; border:1px solid var(--line); border-radius:4px; padding:0 5px; margin-right:6px; background:var(--card); color:var(--fg); }
+.bar { height:10px; background:var(--line); border-radius:6px; overflow:hidden; } .bar > i { display:block; height:100%; background:var(--accent); }
+pre, code { background:var(--card); border:1px solid var(--line); border-radius:6px; font-size:13px; } pre { padding:12px; overflow:auto; white-space:pre-wrap; } code { padding:1px 5px; }
+a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visible { outline:3px solid var(--accent); outline-offset:2px; } svg text { fill:var(--muted); font-size:11px; }
+input[type=text] { font:inherit; padding:7px 9px; border-radius:6px; border:1px solid var(--line); background:var(--bg); color:var(--fg); } summary { cursor:pointer; font-weight:600; margin-bottom:8px; }
+.banner { background:var(--warnbg); color:var(--warn); border:1px solid var(--warn); padding:8px 12px; border-radius:8px; margin-bottom:14px; font-size:14px; }
+</style>
+</head>
+<body>
+<header><b>OMC</b>
+<a href="/" {% if page == 'home' %}aria-current="page"{% endif %}>Home</a>
+<a href="/setup" {% if page == 'setup' %}aria-current="page"{% endif %}>Setup</a>
+{% if run is defined %}<span class="muted">Run: {{ run.name }}</span>
+<a href="/verdict/{{ run.name }}" {% if page == 'verdict' %}aria-current="page"{% endif %}>Verdict</a>
+<a href="/review/{{ run.name }}" {% if page == 'review' %}aria-current="page"{% endif %}>Review</a>
+<a href="/evidence/{{ run.name }}" {% if page == 'evidence' %}aria-current="page"{% endif %}>Evidence</a>{% endif %}
+{% if auth_mode == 'proxy' %}<span class="muted" style="margin-left:auto">{{ user }} ({{ role }})</span>{% endif %}
+{% if role == 'admin' and auth_mode == 'proxy' %}<a href="/audit" {% if page == 'audit' %}aria-current="page"{% endif %}>Audit log</a>{% endif %}
+</header>
+<main>{% block body %}{% endblock %}</main>
+</body>
+</html>
