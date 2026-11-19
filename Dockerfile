@@ -1,6 +1,6 @@
 # Production image for the OMC console (reference). Build: docker build -t omc:0.1 .
 # Pin the base image by digest in CI (docker pull python:3.12-slim-bookworm; use the digest it prints).
-FROM python:3.12-slim-bookworm AS build
+FROM python:3.15-slim-bookworm AS build
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 PIP_NO_CACHE_DIR=1
 WORKDIR /src
 COPY requirements/runtime.txt requirements/runtime.txt
@@ -9,7 +9,7 @@ COPY pyproject.toml README.md ./
 COPY src ./src
 RUN /opt/venv/bin/pip install --no-deps .
 
-FROM python:3.12-slim-bookworm
+FROM python:3.15-slim-bookworm
 ENV PATH="/opt/venv/bin:$PATH" PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 OMC_AUTH_MODE=proxy
 COPY --from=build /opt/venv /opt/venv
 RUN useradd --system --uid 10001 --no-create-home --shell /usr/sbin/nologin omc && mkdir /data && chown omc:omc /data
